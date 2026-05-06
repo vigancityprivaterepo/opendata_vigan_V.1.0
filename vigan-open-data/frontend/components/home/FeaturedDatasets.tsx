@@ -6,15 +6,15 @@ interface Props { datasets: CKANDataset[] }
 
 export default function FeaturedDatasets({ datasets }: Props) {
   return (
-    <section className="bg-vigan-bg" aria-label="Featured datasets">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+    <section className="bg-white" aria-label="Featured datasets">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16 border-t border-gray-100">
 
-        <div className="flex items-end justify-between mb-10 flex-wrap gap-4">
+        <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
           <div>
-            <h2 className="section-title">Featured Datasets</h2>
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-gray-900">Featured Datasets</h2>
           </div>
-          <Link href="/datasets" className="text-sm font-semibold text-vigan-accent hover:text-vigan-primary transition-colors">
-            View All Datasets →
+          <Link href="/datasets" className="text-sm font-semibold text-vigan-primary hover:underline transition-colors">
+            View all datasets →
           </Link>
         </div>
 
@@ -25,11 +25,11 @@ export default function FeaturedDatasets({ datasets }: Props) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 text-vigan-muted">
+          <div className="text-center py-16 text-gray-500">
             <p className="text-4xl mb-4">📭</p>
             <p className="text-lg font-medium">No datasets published yet.</p>
             <p className="text-sm mt-1">
-              <a href="/user/login" className="text-vigan-accent hover:underline">Log in</a> to publish the first dataset.
+              <a href="/user/login" className="text-vigan-primary hover:underline">Log in</a> to publish the first dataset.
             </p>
           </div>
         )}

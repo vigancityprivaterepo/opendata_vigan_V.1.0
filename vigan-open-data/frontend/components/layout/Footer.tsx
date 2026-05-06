@@ -1,63 +1,59 @@
 import Link from 'next/link'
-import { Mail, Phone, MapPin, Facebook, Twitter, ExternalLink } from 'lucide-react'
+import { Mail, Phone, MapPin, ExternalLink } from 'lucide-react'
 
 export default function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="bg-vigan-primaryDk text-white/80" role="contentinfo">
+    <footer className="bg-gray-100 text-gray-600 border-t border-gray-200" role="contentinfo">
 
       {/* ── Main grid ─────────────────────────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
 
         {/* Col 1 — Brand */}
         <div>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-2xl">🏛️</div>
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-2xl text-vigan-primary">🏛️</span>
             <div>
-              <p className="font-display font-bold text-white text-lg leading-tight">Vigan City</p>
-              <p className="text-vigan-light/70 text-xs uppercase tracking-widest">Open Data Portal</p>
+              <p className="font-display font-bold text-gray-900 text-lg leading-tight">Vigan City</p>
+              <p className="text-gray-500 text-xs uppercase tracking-widest">Open Data Portal</p>
             </div>
           </div>
-          <p className="text-sm leading-relaxed mb-3">
+          <p className="text-sm leading-relaxed mb-4 text-gray-600">
             Official open data initiative of the City Government of Vigan,
-            Ilocos Sur — a UNESCO World Heritage City since 1999.
+            Ilocos Sur — a UNESCO World Heritage City.
           </p>
-          <p className="text-xs text-white/40 leading-relaxed mb-4">
-            All data published on this portal is official government data.
-            Please verify with source agencies where critical.
-          </p>
-          <div className="inline-flex items-center gap-2 text-xs bg-white/6 border border-white/10 rounded-lg px-3 py-1.5">
-            <span className="text-white/50">Powered by</span>
+          <div className="inline-flex items-center gap-1.5 text-xs bg-gray-200 text-gray-600 rounded-md px-2.5 py-1">
+            <span>Powered by</span>
             <a href="https://ckan.org" target="_blank" rel="noopener noreferrer"
-               className="font-bold text-vigan-gold hover:text-vigan-goldDk transition-colors">
+               className="font-semibold text-gray-800 hover:text-vigan-primary transition-colors">
               CKAN
             </a>
-            <ExternalLink size={10} className="text-white/30" />
+            <ExternalLink size={10} className="text-gray-500" />
           </div>
         </div>
 
         {/* Col 2 — Explore */}
         <div>
-          <h3 className="font-display font-bold text-white text-sm mb-4 pb-2 border-b-2 border-vigan-gold inline-block">
+          <h3 className="font-display font-semibold text-gray-900 mb-4">
             Explore Data
           </h3>
-          <ul className="space-y-2">
+          <ul className="space-y-2.5">
             {[
               { href: '/datasets',      label: 'All Datasets' },
-              { href: '/organizations', label: 'City Departments' },
+              { href: '/organizations', label: 'Agencies' },
               { href: '/api-docs',      label: 'API Documentation' },
               { href: '/api/3/action/package_list', label: 'CKAN API', external: true },
             ].map((item) => (
               <li key={item.href}>
                 {item.external ? (
                   <a href={item.href} target="_blank" rel="noopener noreferrer"
-                     className="text-sm text-white/70 hover:text-vigan-gold transition-colors flex items-center gap-1">
+                     className="text-sm text-gray-600 hover:text-vigan-primary hover:underline transition-colors flex items-center gap-1 w-fit">
                     {item.label} <ExternalLink size={11} />
                   </a>
                 ) : (
                   <Link href={item.href}
-                        className="text-sm text-white/70 hover:text-vigan-gold transition-colors">
+                        className="text-sm text-gray-600 hover:text-vigan-primary hover:underline transition-colors block w-fit">
                     {item.label}
                   </Link>
                 )}
@@ -68,20 +64,19 @@ export default function Footer() {
 
         {/* Col 3 — Resources */}
         <div>
-          <h3 className="font-display font-bold text-white text-sm mb-4 pb-2 border-b-2 border-vigan-gold inline-block">
+          <h3 className="font-display font-semibold text-gray-900 mb-4">
             Resources
           </h3>
-          <ul className="space-y-2">
+          <ul className="space-y-2.5">
             {[
               { href: '/about',          label: 'About the Portal' },
               { href: '/privacy-policy', label: 'Privacy Policy' },
               { href: '/terms-of-use',   label: 'Terms of Use' },
-              { href: '/data-request',   label: 'Request a Dataset' },
-              { href: '/feedback',       label: 'Send Feedback' },
+              { href: '/data-request',   label: 'Request Data' },
             ].map((item) => (
               <li key={item.href}>
                 <Link href={item.href}
-                      className="text-sm text-white/70 hover:text-vigan-gold transition-colors">
+                      className="text-sm text-gray-600 hover:text-vigan-primary hover:underline transition-colors block w-fit">
                   {item.label}
                 </Link>
               </li>
@@ -91,67 +86,41 @@ export default function Footer() {
 
         {/* Col 4 — Contact */}
         <div>
-          <h3 className="font-display font-bold text-white text-sm mb-4 pb-2 border-b-2 border-vigan-gold inline-block">
+          <h3 className="font-display font-semibold text-gray-900 mb-4">
             Contact Us
           </h3>
           <address className="not-italic space-y-3">
-            <div className="flex gap-2.5 text-sm">
-              <MapPin size={14} className="text-white/40 flex-shrink-0 mt-0.5" aria-hidden="true" />
-              <span className="text-white/70 leading-relaxed">
-                City Hall, Quezon Ave, Vigan City, Ilocos Sur 2700
+            <div className="flex gap-2.5 text-sm items-start">
+              <MapPin size={16} className="text-gray-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
+              <span className="text-gray-600 leading-relaxed">
+                City Hall, Quezon Ave<br/>Vigan City, Ilocos Sur 2700
               </span>
             </div>
             <div className="flex gap-2.5 text-sm items-center">
-              <Mail size={14} className="text-white/40 flex-shrink-0" aria-hidden="true" />
+              <Mail size={16} className="text-gray-400 flex-shrink-0" aria-hidden="true" />
               <a href="mailto:opendata@vigan.gov.ph"
-                 className="text-white/70 hover:text-vigan-gold transition-colors">
+                 className="text-gray-600 hover:text-vigan-primary hover:underline transition-colors">
                 opendata@vigan.gov.ph
               </a>
             </div>
             <div className="flex gap-2.5 text-sm items-center">
-              <Phone size={14} className="text-white/40 flex-shrink-0" aria-hidden="true" />
-              <span className="text-white/70">(077) 722-2623</span>
+              <Phone size={16} className="text-gray-400 flex-shrink-0" aria-hidden="true" />
+              <span className="text-gray-600">(077) 722-2623</span>
             </div>
           </address>
-
-          {/* Social links */}
-          <div className="flex gap-2 mt-5">
-            <a href="https://www.facebook.com/VIGANCITYgov"
-               target="_blank" rel="noopener noreferrer"
-               className="w-9 h-9 flex items-center justify-center rounded-full bg-white/8 border border-white/12 text-white/60 hover:bg-vigan-gold hover:text-vigan-primaryDk hover:border-vigan-gold transition-all"
-               aria-label="Vigan City on Facebook">
-              <Facebook size={16} />
-            </a>
-            <a href="https://twitter.com/vigancity"
-               target="_blank" rel="noopener noreferrer"
-               className="w-9 h-9 flex items-center justify-center rounded-full bg-white/8 border border-white/12 text-white/60 hover:bg-vigan-gold hover:text-vigan-primaryDk hover:border-vigan-gold transition-all"
-               aria-label="Vigan City on Twitter/X">
-              <Twitter size={16} />
-            </a>
-          </div>
         </div>
       </div>
 
       {/* ── Bottom bar ────────────────────────────────────────────────────── */}
-      <div className="bg-black/15 border-t border-white/8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-xs text-white/50">
+      <div className="bg-gray-200 border-t border-gray-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
+          <p>
             © {year} City Government of Vigan. All rights reserved.
           </p>
-          <nav className="flex items-center gap-3 text-xs" aria-label="Legal links">
-            {['Privacy Policy', 'Terms of Use', 'Contact', 'Feedback'].map((label, i) => (
-              <span key={label} className="flex items-center gap-3">
-                {i > 0 && <span className="text-white/25" aria-hidden="true">·</span>}
-                <Link href={`/${label.toLowerCase().replace(/\s+/g, '-')}`}
-                      className="text-white/55 hover:text-vigan-gold transition-colors">
-                  {label}
-                </Link>
-              </span>
-            ))}
-          </nav>
-          <p className="text-[11px] text-white/35 w-full sm:w-auto">
-            This is an official Philippine government website.
-          </p>
+          <div className="flex items-center gap-4">
+            <Link href="/privacy-policy" className="hover:text-gray-800 transition-colors">Privacy Statement</Link>
+            <Link href="/terms-of-use" className="hover:text-gray-800 transition-colors">Terms of Use</Link>
+          </div>
         </div>
       </div>
     </footer>

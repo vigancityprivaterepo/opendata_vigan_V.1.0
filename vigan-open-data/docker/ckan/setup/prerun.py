@@ -69,7 +69,7 @@ def main():
         ["ckan", "--config=/srv/app/ckan.ini", "user", "show", sysadmin_name],
         capture_output=True, text=True
     )
-    if "Name:" not in check.stdout:
+    if check.returncode != 0:
         run([
             "ckan", "--config=/srv/app/ckan.ini",
             "user", "add", sysadmin_name,

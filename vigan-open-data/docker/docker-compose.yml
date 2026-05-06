@@ -6,9 +6,10 @@ services:
   # CKAN — Core data portal engine
   # ─────────────────────────────────────────────────
   ckan:
+    platform: linux/amd64
     build:
-      context: .
-      dockerfile: ckan/Dockerfile
+      context: ..
+      dockerfile: docker/ckan/Dockerfile
     container_name: vigan_ckan
     restart: unless-stopped
     environment:
@@ -23,6 +24,9 @@ services:
       CKAN_SITE_URL: http://localhost:5000
       CKAN_SITE_TITLE: "Vigan City Open Data Portal"
       CKAN_SITE_DESCRIPTION: "Official open data portal of the City Government of Vigan"
+      CKAN_SECRET_KEY: "dev-vigan-secret-key-change-me"
+      CKAN_BEAKER_SESSION_SECRET: "dev-vigan-beaker-secret-change-me"
+      CKAN_BEAKER_SESSION_VALIDATE_KEY: "dev-vigan-beaker-validate-change-me"
       # Auth settings
       CKAN__AUTH__PUBLIC_USER_DETAILS: "true"
       CKAN__AUTH__PUBLIC_ACTIVITY_STREAM_DETAIL: "true"
@@ -33,13 +37,14 @@ services:
       CKAN_SYSADMIN_PASSWORD: "VCAdmin@2026!"
       CKAN_SYSADMIN_EMAIL: admin@vigan.gov.ph
       # Plugins — keep envvars first so env overrides work
-      CKAN__PLUGINS: "envvars image_view text_view recline_view datastore datapusher vigan"
+      CKAN__PLUGINS: "envvars image_view text_view recline_view datastore vigan"
       # Datapusher
       CKAN__DATAPUSHER__URL: http://datapusher:8800
       CKAN__DATAPUSHER__CALLBACK_URL_BASE: http://ckan:5000
+      UWSGI_OPTS: "--plugin python3 --http-socket 0.0.0.0:5000 --wsgi-file /srv/app/wsgi.py --callable application --master --enable-threads --lazy-apps -p 2 -L -b 32768 --vacuum --harakiri 60"
     volumes:
       - ckan_storage:/var/lib/ckan
-      - ./ckan-extensions:/srv/app/src_extensions
+      - ../ckan-extensions:/srv/app/src_extensions
     depends_on:
       db:
         condition: service_healthy
@@ -48,7 +53,7 @@ services:
       redis:
         condition: service_started
     ports:
-      - "5000:5000"
+      - "5001:5000"
     networks:
       - vigan_net
     healthcheck:
@@ -62,10 +67,13 @@ services:
   # Datapusher — Automatic CSV → DataStore ingestion
   # ─────────────────────────────────────────────────
   datapusher:
+    profiles:
+      - datapusher
+    platform: linux/amd64
     image: ckan/ckan-base:2.10
     container_name: vigan_datapusher
     restart: unless-stopped
-    command: /bin/sh -c "pip install datapusher && datapusher -p 8800"
+    command: /bin/sh -c "pip install datapusher ckanserviceprovider messytables && datapusher -p 8800"
     ports:
       - "8800:8800"
     networks:
@@ -98,6 +106,7 @@ services:
   # Solr 9 — Full-text search index
   # ─────────────────────────────────────────────────
   solr:
+    platform: linux/amd64
     image: ckan/ckan-solr:2.10-solr9
     container_name: vigan_solr
     restart: unless-stopped
@@ -135,8 +144,8 @@ services:
     container_name: vigan_nginx
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
+      - "8443:443"
     depends_on:
       - ckan
       - frontend
@@ -150,13 +159,12 @@ services:
   # ─────────────────────────────────────────────────
   frontend:
     build:
-      context: ../../frontend
+      context: ../frontend
       dockerfile: Dockerfile
     container_name: vigan_frontend
     restart: unless-stopped
     environment:
       NEXT_PUBLIC_CKAN_URL: http://ckan:5000
-      NODE_ENV: production
     ports:
       - "3000:3000"
     depends_on:

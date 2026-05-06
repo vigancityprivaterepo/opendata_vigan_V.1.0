@@ -22,8 +22,8 @@ function useCountUp(target: number, duration = 1800, active: boolean) {
   return value
 }
 
-function StatCard({ icon, label, value, suffix }: {
-  icon: string; label: string; value: number; suffix?: string
+function StatCard({ label, value, suffix }: {
+  label: string; value: number; suffix?: string
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const [active, setActive] = useState(false)
@@ -41,24 +41,21 @@ function StatCard({ icon, label, value, suffix }: {
   return (
     <div
       ref={ref}
-      className="flex items-center gap-4 px-5 py-4 bg-white/5 rounded-xl border border-white/8 hover:bg-white/8 transition-colors"
+      className="flex flex-col items-start px-6 py-5 bg-white rounded-xl border border-gray-200 shadow-sm"
     >
-      <span className="text-3xl flex-shrink-0" aria-hidden="true">{icon}</span>
-      <div>
-        <p className="font-display font-extrabold text-3xl text-vigan-gold leading-none">
-          {count.toLocaleString()}{suffix}
-        </p>
-        <p className="text-white/60 text-xs mt-0.5 tracking-wide">{label}</p>
-      </div>
+      <p className="font-display font-bold text-4xl text-vigan-primary leading-none mb-2">
+        {count.toLocaleString()}{suffix}
+      </p>
+      <p className="text-gray-600 text-sm font-medium">{label}</p>
     </div>
   )
 }
 
 const STAT_CARDS = [
-  { icon: '📦', label: 'Published Datasets',  key: 'datasetCount',      suffix: '' },
-  { icon: '🏛️', label: 'City Departments',    key: 'organizationCount', suffix: '' },
-  { icon: '⬇️', label: 'Total Downloads',     key: 'downloads',         suffix: 'K' },
-  { icon: '🔖', label: 'Data Categories',     key: 'tagCount',          suffix: '' },
+  { label: 'Published Datasets',  key: 'datasetCount',      suffix: '' },
+  { label: 'Agencies',            key: 'organizationCount', suffix: '' },
+  { label: 'Total Downloads',     key: 'downloads',         suffix: 'K' },
+  { label: 'Data Categories',     key: 'tagCount',          suffix: '' },
 ]
 
 export default function StatsCounter({ stats }: Props) {
@@ -71,15 +68,13 @@ export default function StatsCounter({ stats }: Props) {
 
   return (
     <section
-      className="border-b-[3px] border-vigan-gold"
-      style={{ background: '#044034' }}
+      className="bg-vigan-bg py-8 border-b border-gray-200"
       aria-label="Portal statistics"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-2 lg:grid-cols-4 gap-4">
         {STAT_CARDS.map((card) => (
           <StatCard
             key={card.key}
-            icon={card.icon}
             label={card.label}
             value={values[card.key] ?? 0}
             suffix={card.suffix}

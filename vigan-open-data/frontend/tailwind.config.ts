@@ -10,28 +10,28 @@ const config: Config = {
     extend: {
       colors: {
         vigan: {
-          primary:   '#065F46',
-          primaryDk: '#044034',
-          secondary: '#10B981',
-          accent:    '#047857',
-          light:     '#D1FAE5',
-          bg:        '#F0FDF4',
-          text:      '#064E3B',
-          muted:     '#4B7A66',
-          border:    '#6EE7B7',
-          gold:      '#F59E0B',
+          primary:   '#065F46', // Emerald 800
+          primaryDk: '#044034', // Emerald 900
+          secondary: '#10B981', // Emerald 500
+          accent:    '#047857', // Emerald 700
+          light:     '#ECFDF5', // Emerald 50
+          bg:        '#F9FAFB', // Gray 50
+          text:      '#1A202C', // Dark for readability
+          muted:     '#64748B', // Slate 500
+          border:    '#D1FAE5', // Emerald 100
+          gold:      '#F59E0B', // Amber (kept for CTAs)
           goldDk:    '#D97706',
           goldLt:    '#FEF3C7',
         },
       },
       fontFamily: {
-        display: ['Playfair Display', 'Georgia', 'serif'],
-        body:    ['Source Sans 3', 'Source Sans Pro', 'system-ui', 'sans-serif'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
+        body:    ['Inter', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        'vigan-sm': '0 1px 3px rgba(6,95,70,0.08), 0 1px 2px rgba(6,95,70,0.04)',
-        'vigan-md': '0 4px 12px rgba(6,95,70,0.10), 0 2px 6px rgba(6,95,70,0.06)',
-        'vigan-lg': '0 12px 32px rgba(6,95,70,0.14), 0 4px 12px rgba(6,95,70,0.08)',
+        'vigan-sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        'vigan-md': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+        'vigan-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025)',
       },
       animation: {
         'fade-in':   'fadeIn 0.5s ease-out both',

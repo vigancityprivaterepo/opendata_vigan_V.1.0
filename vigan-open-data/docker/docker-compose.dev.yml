@@ -9,23 +9,22 @@ services:
     environment:
       CKAN_DEBUG: "true"
       CKAN_SITE_URL: http://localhost:5000
-      NEXT_PUBLIC_CKAN_URL: http://localhost:5000
+      NEXT_PUBLIC_CKAN_URL: http://ckan:5000
     volumes:
       - ckan_storage:/var/lib/ckan
       # Live-mount the extension so edits apply without rebuilding
-      - ../../ckan-extensions:/srv/app/src_extensions
-    ports:
-      - "5000:5000"
+      - ../ckan-extensions:/srv/app/src_extensions
 
   frontend:
+    build:
+      target: deps
     restart: "no"
     environment:
-      NODE_ENV: development
-      NEXT_PUBLIC_CKAN_URL: http://localhost:5000
+      NEXT_PUBLIC_CKAN_URL: http://ckan:5000
     command: npm run dev
     volumes:
       # Live-mount the Next.js source for hot-reload
-      - ../../frontend:/app
+      - ../frontend:/app
       - /app/node_modules
       - /app/.next
     ports:
@@ -33,9 +32,6 @@ services:
 
   db:
     restart: "no"
-    ports:
-      # Expose DB for local GUI clients (e.g. DBeaver, TablePlus)
-      - "5432:5432"
 
   solr:
     restart: "no"

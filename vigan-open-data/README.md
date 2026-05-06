@@ -32,8 +32,9 @@ chmod +x scripts/setup.sh
 
 ### 2. Accessing the Portal
 
-*   **Public Portal (Next.js):** http://localhost
-*   **CKAN Admin UI:** http://localhost/user/login
+*   **Public Portal (Next.js via Nginx):** http://localhost:8080
+*   **CKAN Admin UI:** http://localhost:8080/user/login
+*   **Direct CKAN API:** http://localhost:5001/api/3/action/site_read
 *   **Default Admin Credentials:**
     *   **User:** `vigancity_admin`
     *   **Password:** `VCAdmin@2026!`
@@ -42,7 +43,7 @@ chmod +x scripts/setup.sh
 
 ```bash
 cd docker
-docker-compose down
+docker compose down
 ```
 
 ## 📂 Project Structure

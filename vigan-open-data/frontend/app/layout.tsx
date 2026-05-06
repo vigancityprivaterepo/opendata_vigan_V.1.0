@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
@@ -24,6 +24,9 @@ export const metadata: Metadata = {
     title: 'Vigan City Open Data Portal',
   },
   robots: { index: true, follow: true },
+}
+
+export const viewport: Viewport = {
   themeColor: '#065F46',
 }
 

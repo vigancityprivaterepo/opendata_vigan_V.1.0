@@ -15,10 +15,10 @@ echo "🇵🇭 Vigan City Open Data Portal - Setup Orchestrator"
 echo "==========================================================="
 
 echo "1. Building Docker Images..."
-docker-compose --env-file docker/.env -f docker/docker-compose.yml -f docker/docker-compose.dev.yml build
+docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml build
 
 echo "2. Starting Services..."
-docker-compose --env-file docker/.env -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up -d
+docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up -d
 
 echo "3. Waiting for PostgreSQL and CKAN to initialize (30 seconds)..."
 sleep 30
@@ -28,17 +28,18 @@ echo "4. Running Database Migrations and initial Sysadmin setup..."
 # We just need to give it time to finish.
 
 echo "5. Seeding default Vigan Organizations and Datasets..."
-docker-compose --env-file docker/.env -f docker/docker-compose.yml -f docker/docker-compose.dev.yml exec ckan bash -c "mkdir -p /tmp/scripts"
-docker-compose --env-file docker/.env -f docker/docker-compose.yml -f docker/docker-compose.dev.yml cp scripts/seed-data.sh ckan:/tmp/scripts/seed-data.sh
-docker-compose --env-file docker/.env -f docker/docker-compose.yml -f docker/docker-compose.dev.yml exec ckan chmod +x /tmp/scripts/seed-data.sh
-docker-compose --env-file docker/.env -f docker/docker-compose.yml -f docker/docker-compose.dev.yml exec ckan /tmp/scripts/seed-data.sh
+docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml exec ckan bash -c "mkdir -p /tmp/scripts"
+docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml cp scripts/seed-data.sh ckan:/tmp/scripts/seed-data.sh
+docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml exec ckan chmod +x /tmp/scripts/seed-data.sh
+docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml exec ckan /tmp/scripts/seed-data.sh
 
 echo "==========================================================="
 echo "✅ Setup Complete!"
 echo "==========================================================="
 echo ""
-echo "🌐 Public Portal (Next.js): http://localhost"
-echo "⚙️  CKAN Admin Panel:       http://localhost/user/login"
+echo "🌐 Public Portal (Next.js): http://localhost:8080"
+echo "⚙️  CKAN Admin Panel:       http://localhost:8080/user/login"
+echo "🔌 Direct CKAN API:         http://localhost:5001/api/3/action/site_read"
 echo ""
 echo "🔑 Default Admin Credentials:"
 echo "   Username: vigancity_admin"
