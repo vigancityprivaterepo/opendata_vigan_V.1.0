@@ -1,0 +1,541 @@
+You are a senior DevOps engineer and full-stack developer tasked with building the 
+**Vigan City Open Data Portal** — a production-ready open data platform for the 
+City Government of Vigan, Ilocos Sur, Philippines (a UNESCO World Heritage City).
+
+This project uses **CKAN** (the world's leading open-source data portal platform) 
+as the core engine, deployed via **Docker Compose**, with a fully custom-branded 
+**CKAN theme extension** and a **Next.js 14 public frontend** that consumes the 
+CKAN API.
+
+Build everything step by step. Do not skip any step.
+
+---
+
+## 🏗️ ARCHITECTURE OVERVIEW
+
+The system has 3 layers:
+
+1. **CKAN Backend** — Docker-based CKAN instance (data management, API, admin)
+2. **Custom CKAN Theme** — Python/Jinja2 CKAN extension for branding the admin UI
+3. **Next.js Public Frontend** — Beautiful public-facing portal that consumes 
+   CKAN's REST API
+[Citizens / Developers] │ ▼ [Next.js Frontend :3000] ──API calls──▶ [CKAN API :5000] │ [CKAN Admin UI] │ ┌─────────────────┼──────────────────┐ ▼ ▼ ▼ [PostgreSQL] [Solr] [Redis] (data) (search) (cache)
+
+---
+
+## 📁 PROJECT STRUCTURE
+
+Create this folder structure from scratch:
+vigan-open-data/ ├── docker/ │ ├── docker-compose.yml # full stack orchestration │ ├── docker-compose.dev.yml # dev overrides │ ├── ckan/ │ │ ├── Dockerfile # custom CKAN image │ │ ├── ckan.ini # CKAN configuration │ │ ├── who.ini │ │ └── setup/ │ │ └── prerun.py │ ├── postgres/ │ │ └── init.sql │ └── nginx/ │ ├── Dockerfile │ └── nginx.conf # reverse proxy config │ ├── ckan-extensions/ │ └── ckanext-vigan/ # custom CKAN theme extension │ ├── setup.py │ ├── setup.cfg │ └── ckanext/ │ └── vigan/ │ ├── init.py │ ├── plugin.py # IConfigurer interface │ ├── templates/ # Jinja2 overrides │ │ ├── base.html │ │ ├── header.html │ │ ├── footer.html │ │ └── home/ │ │ └── index.html │ ├── public/ │ │ ├── css/ │ │ │ └── vigan.css │ │ ├── js/ │ │ │ └── vigan.js │ │ └── images/ │ │ └── vigan-logo.svg │ └── fanstatic/ │ ├── frontend/ # Next.js public portal │ ├── app/ │ │ ├── page.tsx # homepage │ │ ├── datasets/ │ │ │ ├── page.tsx # dataset catalog │ │ │ └── [id]/ │ │ │ └── page.tsx # single dataset page │ │ ├── organizations/ │ │ │ └── page.tsx │ │ ├── about/ │ │ │ └── page.tsx │ │ └── api-docs/ │ │ └── page.tsx │ ├── components/ │ │ ├── layout/ │ │ │ ├── Header.tsx │ │ │ ├── Footer.tsx │ │ │ └── Navigation.tsx │ │ ├── datasets/ │ │ │ ├── DatasetCard.tsx │ │ │ ├── DatasetGrid.tsx │ │ │ ├── DatasetFilters.tsx │ │ │ ├── DatasetSearch.tsx │ │ │ ├── CSVPreview.tsx │ │ │ └── DownloadButton.tsx │ │ ├── home/ │ │ │ ├── HeroSection.tsx │ │ │ ├── StatsCounter.tsx │ │ │ ├── FeaturedDatasets.tsx │ │ │ └── DepartmentGrid.tsx │ │ └── ui/ # reusable components │ ├── lib/ │ │ ├── ckan.ts # CKAN API client │ │ └── utils.ts │ ├── types/ │ │ └── ckan.ts # CKAN API type definitions │ ├── public/ │ ├── next.config.ts │ ├── tailwind.config.ts │ └── package.json │ ├── scripts/ │ ├── setup.sh # one-command setup script │ ├── seed-data.sh # seed CKAN with sample data via API │ └── backup.sh │ └── README.md
+
+---
+
+## PART 1: DOCKER COMPOSE SETUP
+
+### docker/docker-compose.yml
+
+Create a complete Docker Compose file with these services:
+
+**ckan** service:
+- Build from ./ckan/Dockerfile
+- Based on ckan/ckan-base:2.10 official image
+- Environment variables:
+  - CKAN_SQLALCHEMY_URL=postgresql://ckan:ckan@db/ckan
+  - CKAN_SOLR_URL=http://solr:8983/solr/ckan
+  - CKAN_REDIS_URL=redis://redis:6379/1
+  - CKAN_SITE_URL=http://localhost:5000
+  - CKAN_SITE_TITLE=Vigan City Open Data Portal
+  - CKAN_SITE_DESCRIPTION=Official open data portal of the City Government of Vigan
+  - CKAN__AUTH__PUBLIC_USER_DETAILS=true
+  - CKAN__AUTH__PUBLIC_ACTIVITY_STREAM_DETAIL=true
+  - CKAN_SYSADMIN_NAME=vigancity_admin
+  - CKAN_SYSADMIN_PASSWORD=VCAdmin@2026!
+  - CKAN_SYSADMIN_EMAIL=admin@vigan.gov.ph
+  - CKAN__PLUGINS=envvars image_view text_view recline_view datastore datapusher vigan
+- Volumes: ckan_storage, ./ckan-extensions:/srv/app/src_extensions
+- Depends on: db, solr, redis
+- Ports: 5000:5000
+
+**datapusher** service:
+- Image: ckan/ckan-base:2.10
+- Port: 8800:8800
+
+**db** service:
+- Image: postgres:16-alpine
+- Environment: POSTGRES_USER=ckan, POSTGRES_PASSWORD=ckan, POSTGRES_DB=ckan
+- Volume: pg_data:/var/lib/postgresql/data
+- Init script: ./postgres/init.sql
+
+**solr** service:
+- Image: ckan/ckan-solr:2.10-solr9
+- Volume: solr_data:/var/solr
+
+**redis** service:
+- Image: redis:7-alpine
+
+**nginx** service:
+- Build from ./nginx/Dockerfile
+- Ports: 80:80, 443:443
+- Depends on: ckan, frontend
+- Reverse proxy: / → frontend:3000, /api/ → ckan:5000, /dataset/ → ckan:5000
+
+**frontend** service:
+- Build from ../frontend/Dockerfile
+- Environment: NEXT_PUBLIC_CKAN_URL=http://ckan:5000
+- Port: 3000:3000
+
+### docker/ckan/Dockerfile
+
+```dockerfile
+FROM ckan/ckan-base:2.10
+
+# Install the custom Vigan theme extension
+COPY ../../ckan-extensions/ckanext-vigan /srv/app/src_extensions/ckanext-vigan
+RUN cd /srv/app/src_extensions/ckanext-vigan && pip install -e .
+
+# Copy CKAN config
+COPY ckan.ini /srv/app/ckan.ini
+COPY who.ini /srv/app/who.ini
+COPY setup/prerun.py /srv/app/prerun.py
+
+USER ckan
+```
+
+### docker/nginx/nginx.conf
+
+Create a full Nginx config that:
+- Listens on port 80
+- Proxies /api/*, /dataset/*, /organization/*, /group/*, /user/*, /dashboard/* 
+  to ckan:5000
+- Proxies everything else to frontend:3000
+- Sets proper proxy headers
+- Handles large file uploads (client_max_body_size 100M)
+- Enables gzip compression
+
+---
+
+## PART 2: CKAN THEME EXTENSION (ckanext-vigan)
+
+### plugin.py
+
+Create a CKAN extension plugin that:
+- Implements IConfigurer interface
+- Adds the extension's template directory to CKAN's template path
+- Adds the extension's public directory (CSS/JS/images) to CKAN's static files
+- Registers the fanstatic library
+
+```python
+import ckan.plugins as plugins
+import ckan.plugins.toolkit as toolkit
+
+class ViganPlugin(plugins.SingletonPlugin):
+    plugins.implements(plugins.IConfigurer)
+
+    def update_config(self, config_):
+        toolkit.add_template_directory(config_, 'templates')
+        toolkit.add_public_directory(config_, 'public')
+        toolkit.add_resource('fanstatic', 'vigan')
+```
+
+### templates/base.html
+
+Override CKAN's base template to inject:
+- Google Fonts: Playfair Display (headings) + Source Sans 3 (body)
+- Custom CSS file (vigan.css)
+- Custom JS file (vigan.js)
+- Vigan City meta tags
+- Open Graph tags
+
+### templates/header.html
+
+Override CKAN header with:
+- Vigan City official logo (SVG placeholder)
+- "City Government of Vigan" tagline
+- Navigation: Datasets | Organizations | About | API
+- Heritage-inspired top bar with "Official Open Data Portal of Vigan City" text
+
+### templates/footer.html
+
+Override CKAN footer with:
+- City Government of Vigan branding
+- Links: Privacy Policy | Terms of Use | Contact | Feedback
+- Powered by CKAN badge
+- Copyright: © 2026 City Government of Vigan. All rights reserved.
+- Philippine government disclaimer
+
+### templates/home/index.html
+
+Override CKAN homepage with a heritage-themed layout:
+- Hero section: "Vigan City Open Data Portal" with colonial architecture SVG background
+- Statistics bar: Total Datasets | Total Organizations | Total Downloads
+- Featured datasets section (show 6 latest public datasets)
+- Browse by category section
+- Browse by organization section
+- "For Developers" CTA section with API info
+
+### public/css/vigan.css
+
+Create comprehensive CSS overrides for the entire CKAN admin UI:
+
+```css
+::root {
+  --vigan-primary: #065F46;      /* deep emerald green */
+  --vigan-secondary: #10B981;    /* bright emerald accent */
+  --vigan-accent: #047857;       /* mid emerald */
+  --vigan-light: #D1FAE5;        /* soft mint background */
+  --vigan-bg: #F0FDF4;           /* pale green tint */
+  --vigan-text: #064E3B;         /* dark forest text */
+  --vigan-border: #6EE7B7;       /* soft emerald border */
+  --vigan-gold: #F59E0B;         /* warm amber for contrast accents */
+  --vigan-success: #059669;
+  --vigan-warning: #D97706;
+}
+```
+
+Style ALL of the following CKAN elements:
+- Navbar: deep emerald (#065F46) background, bright emerald hover states, white text
+- Buttons: primary (deep emerald), secondary (amber outline)
+- Dataset cards: pale green background, emerald left border accent, hover lift effect
+- Search bar: rounded, emerald border on focus
+- Tags/badges: emerald background (#065F46), white text, pill style
+- Breadcrumbs: mid-emerald text links
+- Pagination: deep emerald active state
+- Forms: emerald border on focus states
+- Tables: alternating mint (#D1FAE5) and white row colors
+- Organization cards: emerald icon accent
+- Footer: deep emerald (#065F46) background, amber (#F59E0B) links
+- Hero section: emerald gradient overlay on heritage image
+- Stats counter: amber numbers on deep emerald cards
+- Hover states: bright emerald (#10B981) throughout
+
+
+---
+
+## PART 3: NEXT.JS PUBLIC FRONTEND
+
+### lib/ckan.ts — CKAN API Client
+
+Build a complete TypeScript CKAN API client:
+
+```typescript
+const CKAN_URL = process.env.NEXT_PUBLIC_CKAN_URL || 'http://localhost:5000'
+
+export const ckanAPI = {
+  // Datasets
+  getDatasets: (params: DatasetListParams) => 
+    fetch(`${CKAN_URL}/api/3/action/package_search?...`),
+  getDataset: (id: string) => 
+    fetch(`${CKAN_URL}/api/3/action/package_show?id=${id}`),
+  searchDatasets: (query: string, filters?: FilterParams) => ...,
+  getFeaturedDatasets: (limit = 6) => ...,
+  getRecentDatasets: (limit = 10) => ...,
+
+  // Organizations
+  getOrganizations: () => 
+    fetch(`${CKAN_URL}/api/3/action/organization_list?all_fields=true`),
+  getOrganization: (id: string) => ...,
+
+  // Stats
+  getSiteStats: () => ..., // returns dataset count, org count, etc.
+
+  // Tags
+  getTagList: () => ...,
+}
+```
+
+### types/ckan.ts
+
+Define complete TypeScript types for all CKAN API responses:
+- CKANDataset, CKANResource, CKANOrganization, CKANTag, CKANUser
+- CKANPackageSearchResult, CKANAPIResponse
+- DatasetListParams with pagination, search, filter fields
+
+### app/page.tsx — Homepage
+
+Build a stunning heritage-themed homepage with these sections:
+
+HeroSection:
+- Full-width hero with deep emerald gradient background 
+  (linear-gradient from #065F46 to #047857)
+- Subtle green mesh texture overlay using CSS
+- "Vigan City Open Data Portal" in Playfair Display, white text
+- Amber (#F59E0B) underline accent on heading
+- Search bar: white background, emerald focus ring
+- CTA buttons: primary (amber #F59E0B, dark text), 
+  secondary (white outline)
+
+
+**StatsCounter**: 
+- Animated counters for: Total Datasets, Departments, Downloads, Last Updated
+- Amber numbers on deep emerald cards 
+- Count-up animation on first viewport entry
+
+**FeaturedDatasets**: 
+- "Featured Datasets" heading with gold underline
+- 6 dataset cards in a responsive grid (3 cols desktop, 2 tablet, 1 mobile)
+- Each card: category badge, title, description excerpt, department name, 
+  format badge (CSV/PDF/etc), download count, "View Dataset" button
+
+**DepartmentGrid**: 
+- "Browse by Department" heading
+- 7 department cards with icon + name + dataset count
+- Emerald hover state 
+
+**CategoryBrowser**: 
+- "Browse by Category" with pill buttons:
+  Tourism, Disaster Risk, Health, City Planning, 
+  Business, Budget, Environment
+
+**DeveloperCTA**: 
+- Deep emerald background section 
+- "Build with Vigan's Open Data" heading
+- API endpoint example
+- Link to API docs
+
+### app/datasets/page.tsx — Dataset Catalog
+
+Full-featured dataset browser:
+- Sticky search bar at top
+- Left sidebar (desktop) / drawer (mobile) with filters:
+  - Department (checkbox list from CKAN organizations)
+  - Format (CSV, GeoJSON, XLSX, PDF, JSON)
+  - Category (Tourism, DRRM, Health, Planning, Business, Budget, Environment)
+  - License
+  - Date range picker
+- Sort dropdown: Newest, Most Downloaded, A-Z
+- View toggle: Grid | List
+- Results count: "Showing 24 of 87 datasets"
+- Dataset grid/list with pagination
+- Empty state with illustration when no results
+- URL-based state (search params sync with URL for shareable links)
+- Loading skeleton while fetching
+
+### app/datasets/[id]/page.tsx — Dataset Detail
+
+Individual dataset page:
+- Breadcrumb: Home > Datasets > [Title]
+- Dataset header: Title, description, organization badge, license badge
+- Metadata sidebar: Format, Last Updated, Published, Downloads, License, Tags
+- "Download" button (prominent, deep emerald) 
+- "View in CKAN" link
+- Tabs: Preview | Resources | API Access
+  - **Preview tab**: For CSV resources, show Papa Parse table preview 
+    (first 10 rows, scrollable horizontally)
+  - **Resources tab**: List all attached files with format, size, download button
+  - **API Access tab**: Show CKAN API endpoint for this dataset with 
+    copy-to-clipboard button and example curl command
+- Related datasets section (same organization or same tags)
+
+### app/organizations/page.tsx — Departments
+
+- Page header: "City Departments"
+- Grid of department cards:
+  - Department icon (unique SVG per department)
+  - Department name
+  - Description
+  - Dataset count badge
+  - "View Datasets" button
+- Click → filtered dataset catalog for that department
+
+### components/layout/Header.tsx
+
+- Sticky header with scroll shadow
+- Left: Vigan City seal SVG + "Vigan Open Data" text
+- Center (desktop): Navigation links
+- Right: "Admin Login" button (links to CKAN admin at /user/login)
+- Mobile: hamburger menu
+- Thin top bar: "Official Open Data Portal of the City Government of Vigan, Ilocos Sur"
+
+### components/layout/Footer.tsx
+
+- Three-column layout:
+  - Col 1: Vigan City logo + description
+  - Col 2: Quick links
+  - Col 3: Contact info + social links
+- Bottom bar: Copyright + powered by CKAN
+
+### Design System (tailwind.config.ts)
+
+Extend Tailwind with:
+```javascript
+colors: {
+  vigan: {
+    primary: '#065F46',      // deep emerald
+    secondary: '#10B981',    // bright emerald
+    accent: '#047857',       // mid emerald
+    light: '#D1FAE5',        // mint
+    bg: '#F0FDF4',           // pale green
+    text: '#064E3B',         // dark forest
+    border: '#6EE7B7',       // soft emerald border
+    gold: '#F59E0B',         // amber contrast
+  }
+},
+fontFamily: {
+  display: ['Playfair Display', 'serif'],
+  body: ['Source Sans 3', 'sans-serif'],
+},
+```
+
+---
+
+## PART 4: SEED DATA SCRIPT
+
+### scripts/seed-data.sh
+
+Create a bash script that uses the CKAN API to seed the portal with:
+
+**Step 1 — Create Organizations (Departments):**
+Use curl POST to /api/3/action/organization_create for each:
+1. city-planning — City Planning & Development Office
+2. tourism-office — Vigan City Tourism Office  
+3. drrmo — Disaster Risk Reduction & Management Office
+4. city-health — City Health Office
+5. business-permits — Business Permits & Licensing Office
+6. city-budget — City Budget Office
+7. cenro — City Environment & Natural Resources Office
+
+**Step 2 — Create Datasets:**
+Use curl POST to /api/3/action/package_create for each dataset:
+
+Tourism Office datasets:
+- tourist-arrivals-2024: "Tourist Arrival Statistics 2024" (CSV)
+- heritage-buildings-registry: "Vigan Heritage Building Registry" (GeoJSON)  
+- accredited-establishments: "Accredited Tourism Establishments" (CSV)
+- calle-crisologo-footfall: "Calle Crisologo Foot Traffic Data" (CSV)
+
+DRRMO datasets:
+- flood-hazard-zones: "Vigan Flood Hazard Zone Map" (GeoJSON)
+- evacuation-centers: "Evacuation Centers Directory" (CSV)
+- typhoon-incident-history: "Historical Typhoon Incidents 2010-2024" (CSV)
+
+City Health datasets:
+- health-facilities: "Health Facility Directory" (CSV)
+- vaccination-coverage: "Vaccination Coverage by Barangay 2024" (CSV)
+- disease-surveillance: "Disease Surveillance Report 2024" (CSV)
+
+City Planning datasets:
+- barangay-boundaries: "Vigan Barangay Boundary Map" (GeoJSON)
+- zoning-map: "Zoning Classification Map 2024" (PDF)
+- building-permits-2024: "Building Permits Issued 2024" (CSV)
+
+Business Permits datasets:
+- active-business-permits: "Active Business Permits Registry" (CSV)
+- business-by-barangay: "Business Classification by Barangay" (CSV)
+
+City Budget datasets:
+- annual-budget-2024: "Annual Budget 2024" (PDF)
+- budget-utilization: "Budget Utilization Rate by Quarter" (CSV)
+
+CENRO datasets:
+- air-quality: "Air Quality Monitoring Data" (CSV)
+- water-quality: "Water Quality Reports 2024" (CSV)
+
+For each dataset include: name, title, notes (description), owner_org, 
+tags, license_id (cc-by), and at least one resource with format and url.
+
+---
+
+## PART 5: ONE-COMMAND SETUP
+
+### scripts/setup.sh
+
+```bash
+#!/bin/bash
+set -e
+
+echo "🏛️  Setting up Vigan City Open Data Portal..."
+
+# Check Docker is installed
+command -v docker >/dev/null 2>&1 || { echo "Docker required"; exit 1; }
+command -v docker-compose >/dev/null 2>&1 || { echo "Docker Compose required"; exit 1; }
+
+# Copy env file
+cp .env.example .env
+
+# Build and start all containers
+echo "🐳 Starting Docker containers..."
+cd docker && docker-compose up -d --build
+
+# Wait for CKAN to be ready
+echo "⏳ Waiting for CKAN to initialize (60s)..."
+sleep 60
+
+# Run seed data script
+echo "🌱 Seeding sample data..."
+cd ../scripts && bash seed-data.sh
+
+echo ""
+echo "✅ Vigan City Open Data Portal is ready!"
+echo ""
+echo "   🌐 Public Portal:  http://localhost"
+echo "   ⚙️  CKAN Admin:     http://localhost/user/login"
+echo "   📡 CKAN API:       http://localhost/api/3/action/package_list"
+echo ""
+echo "   Admin credentials:"
+echo "   Username: vigancity_admin"
+echo "   Password: VCAdmin@2025!"
+```
+
+---
+
+## PART 6: README.md
+
+Write a complete README.md with:
+
+### Sections:
+1. **Project Overview** — what it is, who it's for, screenshot placeholder
+2. **Architecture** — ASCII diagram of the stack
+3. **Prerequisites** — Docker 20+, Docker Compose v2, Node.js 18+ (for local dev)
+4. **Quick Start** — one-command setup with setup.sh
+5. **Manual Setup** — step by step if setup.sh fails
+6. **Configuration** — all environment variables documented in a table
+7. **CKAN Admin Guide** — how to log in, create organizations, publish datasets
+8. **Custom Theme** — how to modify colors, logos, templates
+9. **API Documentation** — all CKAN API endpoints with example curl requests:
+   - List datasets
+   - Search datasets
+   - Get single dataset
+   - List organizations
+   - Download resource
+10. **Adding New Departments** — step by step
+11. **Updating the Frontend** — how to run Next.js in dev mode
+12. **Deployment** — notes on deploying to a production server
+13. **Troubleshooting** — common Docker issues and fixes
+14. **License** — MIT
+
+---
+
+## ✅ DEFINITION OF DONE
+
+The project is complete when ALL of the following work:
+
+1. `bash scripts/setup.sh` completes without errors
+2. `http://localhost` shows the custom Vigan-branded Next.js homepage
+3. Dataset catalog at `http://localhost/datasets` lists all seeded datasets
+4. Individual dataset pages load with metadata and CSV preview
+5. `http://localhost/user/login` shows the CKAN admin login with Vigan branding
+6. Logging in as vigancity_admin shows the branded CKAN dashboard
+7. Admin can create a new dataset and it appears on the public portal
+8. `http://localhost/api/3/action/package_list` returns JSON of all datasets
+9. All 7 departments appear on the Organizations page
+10. The portal is fully mobile-responsive
+11. README has complete, accurate setup instructions
+
+---
+
+## 📋 EXECUTION ORDER
+
+Build in this exact order:
+1. Project folder structure + git init
+2. Docker Compose + all service configs
+3. CKAN Dockerfile + ckan.ini configuration  
+4. ckanext-vigan extension (plugin.py + templates + CSS)
+5. Nginx reverse proxy config
+6. Next.js frontend (types → lib/ckan.ts → components → pages)
+7. Seed data script
+8. Setup script
+9. README.md
+10. Final integration test — verify all endpoints
+
+At each step, verify the previous step works before proceeding.
+

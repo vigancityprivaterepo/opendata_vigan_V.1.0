@@ -1,0 +1,104 @@
+{% ckan_extends %}
+
+{% block header %}
+<header class="vigan-site-header" role="banner">
+
+  {# ── Heritage top bar ──────────────────────────────────────────────────── #}
+  <div class="vigan-topbar" aria-label="Official government portal notice">
+    <div class="vigan-topbar__inner">
+      <span class="vigan-topbar__flag">🇵🇭</span>
+      <span class="vigan-topbar__text">
+        Official Open Data Portal · City Government of Vigan, Ilocos Sur ·
+        <strong>UNESCO World Heritage City</strong>
+      </span>
+      <span class="vigan-topbar__year">Est. 1572</span>
+    </div>
+  </div>
+
+  {# ── Main navbar ───────────────────────────────────────────────────────── #}
+  <nav class="vigan-navbar" aria-label="Main navigation">
+    <div class="vigan-navbar__inner">
+
+      {# Logo + wordmark #}
+      <a href="{{ h.url_for('/') }}" class="vigan-navbar__brand" aria-label="Vigan Open Data Home">
+        <img src="/images/vigan-logo.svg"
+             alt="City Government of Vigan Official Seal"
+             class="vigan-navbar__logo"
+             width="48" height="48">
+        <div class="vigan-navbar__wordmark">
+          <span class="vigan-navbar__city">City of Vigan</span>
+          <span class="vigan-navbar__portal">Open Data Portal</span>
+        </div>
+      </a>
+
+      {# Desktop navigation #}
+      <ul class="vigan-navbar__links" role="list">
+        <li><a href="{{ h.url_for('dataset.search') }}"
+               class="vigan-navbar__link {% if h.is_url('dataset.search') %}active{% endif %}">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Datasets
+        </a></li>
+        <li><a href="{{ h.url_for('organization.index') }}"
+               class="vigan-navbar__link {% if h.is_url('organization.index') %}active{% endif %}">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Departments
+        </a></li>
+        <li><a href="{{ h.url_for('group.index') }}"
+               class="vigan-navbar__link {% if h.is_url('group.index') %}active{% endif %}">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+          Categories
+        </a></li>
+        <li><a href="/api-docs"
+               class="vigan-navbar__link">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          API
+        </a></li>
+        <li><a href="/about"
+               class="vigan-navbar__link">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          About
+        </a></li>
+      </ul>
+
+      {# Right-side actions #}
+      <div class="vigan-navbar__actions">
+        {% if c.userobj %}
+          <div class="vigan-navbar__user">
+            <span class="vigan-navbar__username">{{ c.userobj.name }}</span>
+            <div class="vigan-navbar__user-menu" role="menu">
+              <a href="{{ h.url_for('user.me') }}" role="menuitem">Profile</a>
+              <a href="{{ h.url_for('dashboard.index') }}" role="menuitem">Dashboard</a>
+              <hr>
+              <a href="{{ h.url_for('user.logout') }}" role="menuitem">Log Out</a>
+            </div>
+          </div>
+        {% else %}
+          <a href="{{ h.url_for('user.login') }}" class="vigan-btn vigan-btn--outline-sm">
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Admin Login
+          </a>
+        {% endif %}
+      </div>
+
+      {# Mobile hamburger #}
+      <button class="vigan-navbar__burger" id="vigan-nav-toggle"
+              aria-controls="vigan-mobile-menu" aria-expanded="false"
+              aria-label="Open navigation menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    {# Mobile drop-down menu #}
+    <div class="vigan-mobile-menu" id="vigan-mobile-menu" hidden>
+      <a href="{{ h.url_for('dataset.search') }}"   class="vigan-mobile-menu__link">Datasets</a>
+      <a href="{{ h.url_for('organization.index') }}" class="vigan-mobile-menu__link">Departments</a>
+      <a href="{{ h.url_for('group.index') }}"      class="vigan-mobile-menu__link">Categories</a>
+      <a href="/api-docs"                            class="vigan-mobile-menu__link">API Docs</a>
+      <a href="/about"                               class="vigan-mobile-menu__link">About</a>
+      <hr class="vigan-mobile-menu__divider">
+      <a href="{{ h.url_for('user.login') }}"       class="vigan-mobile-menu__link vigan-mobile-menu__link--cta">Admin Login</a>
+    </div>
+  </nav>
+
+</header>
+{% endblock %}

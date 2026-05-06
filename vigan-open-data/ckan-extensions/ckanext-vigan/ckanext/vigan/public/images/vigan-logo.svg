@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="City Government of Vigan Seal">
+  <title>City Government of Vigan Official Seal</title>
+
+  <!-- Outer ring -->
+  <circle cx="60" cy="60" r="58" fill="#065F46" stroke="#F59E0B" stroke-width="3"/>
+  <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+
+  <!-- Inner circle -->
+  <circle cx="60" cy="60" r="44" fill="#047857"/>
+
+  <!-- Colonial church silhouette (Vigan Cathedral style) -->
+  <!-- Main nave -->
+  <rect x="42" y="48" width="36" height="30" fill="rgba(255,255,255,0.9)" rx="1"/>
+  <!-- Facade / frontispiece -->
+  <rect x="38" y="52" width="44" height="26" fill="rgba(255,255,255,0.95)" rx="1"/>
+  <!-- Bell tower left -->
+  <rect x="32" y="44" width="14" height="34" fill="rgba(255,255,255,0.85)" rx="1"/>
+  <!-- Bell tower right -->
+  <rect x="74" y="44" width="14" height="34" fill="rgba(255,255,255,0.85)" rx="1"/>
+  <!-- Left tower spire -->
+  <polygon points="39,44 32,44 35.5,34" fill="#F59E0B"/>
+  <!-- Right tower spire -->
+  <polygon points="81,44 88,44 84.5,34" fill="#F59E0B"/>
+  <!-- Center cross / pediment -->
+  <polygon points="60,30 50,48 70,48" fill="rgba(255,255,255,0.7)"/>
+  <!-- Cross -->
+  <rect x="58" y="22" width="4" height="14" fill="#F59E0B" rx="1"/>
+  <rect x="53" y="27" width="14" height="4" fill="#F59E0B" rx="1"/>
+  <!-- Arch window -->
+  <ellipse cx="60" cy="62" rx="7" ry="9" fill="#065F46"/>
+  <!-- Door arch -->
+  <rect x="55" y="65" width="10" height="13" fill="#065F46" rx="1"/>
+  <!-- Cobblestone bottom row -->
+  <rect x="28" y="78" width="64" height="4" fill="rgba(255,255,255,0.3)" rx="2"/>
+
+  <!-- Stars decorative ring (top arc) -->
+  <g fill="#F59E0B" opacity="0.9">
+    <circle cx="60" cy="10" r="1.5"/>
+    <circle cx="76" cy="13" r="1.2"/>
+    <circle cx="89" cy="22" r="1.2"/>
+    <circle cx="44" cy="13" r="1.2"/>
+    <circle cx="31" cy="22" r="1.2"/>
+  </g>
+
+  <!-- Text arc: CITY GOVERNMENT OF VIGAN (simulated with simple text) -->
+  <text font-family="Georgia, serif" font-size="7" font-weight="bold"
+        fill="#F59E0B" text-anchor="middle"
+        transform="rotate(0,60,60)">
+    <textPath xmlns:xlink="http://www.w3.org/1999/xlink"
+              xlink:href="#top-arc" startOffset="50%">
+      CITY GOVERNMENT OF VIGAN
+    </textPath>
+  </text>
+  <defs>
+    <path id="top-arc" d="M 15,60 A 45,45 0 0,1 105,60"/>
+  </defs>
+
+  <!-- Bottom text: ILOCOS SUR -->
+  <text x="60" y="100" font-family="Georgia, serif" font-size="6"
+        font-weight="bold" fill="rgba(255,255,255,0.8)"
+        text-anchor="middle" letter-spacing="2">ILOCOS SUR</text>
+
+  <!-- Est year -->
+  <text x="60" y="108" font-family="Georgia, serif" font-size="5.5"
+        fill="#F59E0B" text-anchor="middle" opacity="0.85">Est. 1572</text>
+
+</svg>

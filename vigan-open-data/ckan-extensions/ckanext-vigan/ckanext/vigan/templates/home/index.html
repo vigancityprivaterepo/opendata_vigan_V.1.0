@@ -1,0 +1,300 @@
+{% extends "page.html" %}
+
+{% block subtitle %}{{ _("Home") }}{% endblock %}
+
+{% block bodytag %}{{ super() }} class="vigan-homepage"{% endblock %}
+
+{% block primary_content %}
+
+{# ══════════════════════════════════════════════════════════════════════════════
+   HERO SECTION
+   ══════════════════════════════════════════════════════════════════════════════ #}
+<section class="vigan-hero" aria-label="Portal hero">
+  <div class="vigan-hero__bg-mesh" aria-hidden="true"></div>
+
+  <div class="vigan-hero__inner">
+    <div class="vigan-hero__content">
+
+      <span class="vigan-hero__eyebrow">🏛️ UNESCO World Heritage City</span>
+
+      <h1 class="vigan-hero__title">
+        Vigan City
+        <span class="vigan-hero__title-accent">Open Data</span>
+        Portal
+      </h1>
+
+      <p class="vigan-hero__subtitle">
+        Discover, explore, and download official datasets from City Government
+        departments. Transparent governance, powered by open data.
+      </p>
+
+      {# Search bar #}
+      <form class="vigan-hero__search" action="{{ h.url_for('dataset.search') }}"
+            method="GET" role="search" aria-label="Search datasets">
+        <div class="vigan-hero__search-wrap">
+          <svg class="vigan-hero__search-icon" aria-hidden="true"
+               width="20" height="20" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input type="search" name="q" id="hero-search"
+                 class="vigan-hero__search-input"
+                 placeholder="Search datasets, topics, departments…"
+                 autocomplete="off" aria-label="Search term">
+          <button type="submit" class="vigan-hero__search-btn">Search</button>
+        </div>
+      </form>
+
+      {# Popular tags #}
+      <div class="vigan-hero__tags" aria-label="Popular topics">
+        <span class="vigan-hero__tags-label">Popular:</span>
+        {% set popular_tags = ['Tourism', 'Budget', 'Health', 'DRRM', 'GeoJSON', 'Barangay'] %}
+        {% for tag in popular_tags %}
+          <a href="{{ h.url_for('dataset.search', tags=tag) }}"
+             class="vigan-hero__tag">{{ tag }}</a>
+        {% endfor %}
+      </div>
+
+    </div>
+
+    {# Decorative heritage SVG illustration #}
+    <div class="vigan-hero__illustration" aria-hidden="true">
+      <svg class="vigan-hero__heritage-svg" viewBox="0 0 400 320"
+           xmlns="http://www.w3.org/2000/svg" fill="none">
+        <!-- Simplified colonial church silhouette -->
+        <rect x="160" y="80"  width="80" height="160" fill="rgba(255,255,255,0.08)" rx="2"/>
+        <rect x="140" y="120" width="120" height="120" fill="rgba(255,255,255,0.06)" rx="2"/>
+        <polygon points="200,30 155,80 245,80" fill="rgba(255,255,255,0.12)"/>
+        <rect x="185" y="30" width="30" height="50" fill="rgba(255,255,255,0.10)" rx="2"/>
+        <rect x="170" y="180" width="20" height="60" fill="rgba(255,255,255,0.15)" rx="1"/>
+        <rect x="210" y="180" width="20" height="60" fill="rgba(255,255,255,0.15)" rx="1"/>
+        <!-- Cobblestone street dots -->
+        {% for row in range(5) %}
+          {% for col in range(12) %}
+            <circle cx="{{ 80 + col * 22 }}" cy="{{ 270 + row * 12 }}"
+                    r="3" fill="rgba(255,255,255,0.05)"/>
+          {% endfor %}
+        {% endfor %}
+      </svg>
+    </div>
+
+  </div>
+
+  {# CTA Buttons #}
+  <div class="vigan-hero__ctas">
+    <a href="{{ h.url_for('dataset.search') }}" class="vigan-btn vigan-btn--amber">
+      Browse All Datasets
+    </a>
+    <a href="/api/3/action/package_list" class="vigan-btn vigan-btn--ghost" target="_blank">
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      Access API
+    </a>
+  </div>
+
+</section>
+
+
+{# ══════════════════════════════════════════════════════════════════════════════
+   STATS COUNTER BAR
+   ══════════════════════════════════════════════════════════════════════════════ #}
+<section class="vigan-stats" aria-label="Portal statistics">
+  <div class="vigan-stats__inner">
+
+    {% set stats = [
+      { 'icon': '📦', 'label': 'Published Datasets', 'key': 'datasets',   'suffix': '' },
+      { 'icon': '🏛️', 'label': 'City Departments',   'key': 'orgs',       'suffix': '' },
+      { 'icon': '⬇️', 'label': 'Total Downloads',    'key': 'downloads',  'suffix': 'K' },
+      { 'icon': '🕒', 'label': 'Last Updated',        'key': 'updated',    'suffix': '' },
+    ] %}
+
+    {% for stat in stats %}
+    <div class="vigan-stats__card" data-stat="{{ stat.key }}">
+      <span class="vigan-stats__icon" aria-hidden="true">{{ stat.icon }}</span>
+      <div class="vigan-stats__data">
+        <span class="vigan-stats__number js-counter"
+              data-target="{% if stat.key == 'datasets' %}{{ h.get_action('package_search')({})['count'] }}{% elif stat.key == 'orgs' %}7{% elif stat.key == 'downloads' %}12{% else %}—{% endif %}"
+              data-suffix="{{ stat.suffix }}">
+          0{{ stat.suffix }}
+        </span>
+        <span class="vigan-stats__label">{{ stat.label }}</span>
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+</section>
+
+
+{# ══════════════════════════════════════════════════════════════════════════════
+   FEATURED DATASETS
+   ══════════════════════════════════════════════════════════════════════════════ #}
+<section class="vigan-featured" aria-label="Featured datasets">
+  <div class="vigan-section__inner">
+
+    <header class="vigan-section__header">
+      <h2 class="vigan-section__title">
+        Featured Datasets
+        <span class="vigan-section__title-line" aria-hidden="true"></span>
+      </h2>
+      <a href="{{ h.url_for('dataset.search') }}" class="vigan-section__view-all">
+        View All Datasets →
+      </a>
+    </header>
+
+    {% set featured = h.get_action('package_search')({'rows': 6, 'sort': 'metadata_modified desc'})['results'] %}
+
+    {% if featured %}
+    <div class="vigan-dataset-grid">
+      {% for pkg in featured %}
+      <article class="vigan-dataset-card" aria-label="{{ pkg.title or pkg.name }}">
+
+        <div class="vigan-dataset-card__header">
+          <span class="vigan-dataset-card__org">
+            {{ pkg.organization.title if pkg.organization else 'Vigan City' }}
+          </span>
+          {% if pkg.resources %}
+            <span class="vigan-dataset-card__format vigan-format-badge vigan-format-badge--{{ (pkg.resources[0].format or 'data')|lower }}">
+              {{ pkg.resources[0].format or 'DATA' }}
+            </span>
+          {% endif %}
+        </div>
+
+        <h3 class="vigan-dataset-card__title">
+          <a href="{{ h.url_for('dataset.read', id=pkg.name) }}"
+             class="vigan-dataset-card__title-link">
+            {{ pkg.title or pkg.name }}
+          </a>
+        </h3>
+
+        <p class="vigan-dataset-card__desc">
+          {{ (pkg.notes or '')|truncate(120) }}
+        </p>
+
+        <footer class="vigan-dataset-card__footer">
+          <span class="vigan-dataset-card__resources">
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            {{ pkg.resources|length }} resource{{ 's' if pkg.resources|length != 1 }}
+          </span>
+          <a href="{{ h.url_for('dataset.read', id=pkg.name) }}"
+             class="vigan-btn vigan-btn--sm">
+            View Dataset
+          </a>
+        </footer>
+
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="vigan-empty-state">
+      <p>No datasets published yet. <a href="{{ h.url_for('user.login') }}">Login</a> to add the first one.</p>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+
+{# ══════════════════════════════════════════════════════════════════════════════
+   BROWSE BY DEPARTMENT
+   ══════════════════════════════════════════════════════════════════════════════ #}
+<section class="vigan-departments" aria-label="Browse by department">
+  <div class="vigan-section__inner">
+
+    <header class="vigan-section__header">
+      <h2 class="vigan-section__title">
+        Browse by Department
+        <span class="vigan-section__title-line" aria-hidden="true"></span>
+      </h2>
+      <a href="{{ h.url_for('organization.index') }}" class="vigan-section__view-all">
+        All Departments →
+      </a>
+    </header>
+
+    <div class="vigan-dept-grid">
+      {% for dept in h.vigan_departments() %}
+      <a href="{{ h.url_for('dataset.search', organization=dept.id) }}"
+         class="vigan-dept-card" aria-label="{{ dept.name }}">
+        <span class="vigan-dept-card__icon" aria-hidden="true">{{ dept.icon }}</span>
+        <span class="vigan-dept-card__short">{{ dept.short }}</span>
+        <span class="vigan-dept-card__name">{{ dept.name }}</span>
+      </a>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+
+{# ══════════════════════════════════════════════════════════════════════════════
+   BROWSE BY CATEGORY (pill buttons)
+   ══════════════════════════════════════════════════════════════════════════════ #}
+<section class="vigan-categories" aria-label="Browse by category">
+  <div class="vigan-section__inner">
+
+    <h2 class="vigan-section__title vigan-section__title--center">
+      Browse by Category
+      <span class="vigan-section__title-line" aria-hidden="true"></span>
+    </h2>
+
+    <div class="vigan-category-pills" role="list">
+      {% set categories = [
+        {'name': 'Tourism',      'icon': '🏺', 'tag': 'tourism'},
+        {'name': 'Disaster Risk','icon': '🛡️', 'tag': 'drrm'},
+        {'name': 'Health',       'icon': '🏥', 'tag': 'health'},
+        {'name': 'City Planning','icon': '🏛️', 'tag': 'planning'},
+        {'name': 'Business',     'icon': '📋', 'tag': 'business'},
+        {'name': 'Budget',       'icon': '💰', 'tag': 'budget'},
+        {'name': 'Environment',  'icon': '🌿', 'tag': 'environment'},
+        {'name': 'GIS / Maps',   'icon': '🗺️', 'tag': 'geojson'},
+      ] %}
+      {% for cat in categories %}
+      <a href="{{ h.url_for('dataset.search', tags=cat.tag) }}"
+         class="vigan-category-pill" role="listitem">
+        <span aria-hidden="true">{{ cat.icon }}</span> {{ cat.name }}
+      </a>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+
+{# ══════════════════════════════════════════════════════════════════════════════
+   DEVELOPER CTA
+   ══════════════════════════════════════════════════════════════════════════════ #}
+<section class="vigan-dev-cta" aria-label="Developer API access">
+  <div class="vigan-dev-cta__inner">
+
+    <div class="vigan-dev-cta__content">
+      <span class="vigan-dev-cta__eyebrow">For Developers</span>
+      <h2 class="vigan-dev-cta__title">Build with Vigan's Open Data</h2>
+      <p class="vigan-dev-cta__desc">
+        All datasets are accessible via the CKAN REST API. No authentication required
+        for public data — start building in minutes.
+      </p>
+      <div class="vigan-dev-cta__actions">
+        <a href="/api-docs" class="vigan-btn vigan-btn--amber">
+          Read API Docs
+        </a>
+        <a href="/api/3/action/package_list" target="_blank"
+           class="vigan-btn vigan-btn--ghost">
+          Try the API
+        </a>
+      </div>
+    </div>
+
+    <div class="vigan-dev-cta__code" aria-label="API example">
+      <div class="vigan-code-block">
+        <div class="vigan-code-block__header">
+          <span>API Example</span>
+          <button class="vigan-code-block__copy" data-target="api-example"
+                  aria-label="Copy code">Copy</button>
+        </div>
+        <pre class="vigan-code-block__pre" id="api-example"><code>curl "https://data.vigan.gov.ph/api/3/action/package_search?q=tourism&rows=5"</code></pre>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

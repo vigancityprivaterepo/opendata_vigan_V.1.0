@@ -1,0 +1,185 @@
+version: "3.8"
+
+services:
+
+  # ─────────────────────────────────────────────────
+  # CKAN — Core data portal engine
+  # ─────────────────────────────────────────────────
+  ckan:
+    build:
+      context: .
+      dockerfile: ckan/Dockerfile
+    container_name: vigan_ckan
+    restart: unless-stopped
+    environment:
+      # Database
+      CKAN_SQLALCHEMY_URL: postgresql://ckan:ckan@db/ckan
+      CKAN_DATASTORE_WRITE_URL: postgresql://ckan:ckan@db/datastore
+      CKAN_DATASTORE_READ_URL: postgresql://datastore_ro:datastore@db/datastore
+      # Search & Cache
+      CKAN_SOLR_URL: http://solr:8983/solr/ckan
+      CKAN_REDIS_URL: redis://redis:6379/1
+      # Site configuration
+      CKAN_SITE_URL: http://localhost:5000
+      CKAN_SITE_TITLE: "Vigan City Open Data Portal"
+      CKAN_SITE_DESCRIPTION: "Official open data portal of the City Government of Vigan"
+      # Auth settings
+      CKAN__AUTH__PUBLIC_USER_DETAILS: "true"
+      CKAN__AUTH__PUBLIC_ACTIVITY_STREAM_DETAIL: "true"
+      CKAN__AUTH__ALLOW_DATASET_COLLABORATORS: "false"
+      CKAN__AUTH__CREATE_UNOWNED_DATASET: "false"
+      # Sysadmin bootstrap
+      CKAN_SYSADMIN_NAME: vigancity_admin
+      CKAN_SYSADMIN_PASSWORD: "VCAdmin@2026!"
+      CKAN_SYSADMIN_EMAIL: admin@vigan.gov.ph
+      # Plugins — keep envvars first so env overrides work
+      CKAN__PLUGINS: "envvars image_view text_view recline_view datastore datapusher vigan"
+      # Datapusher
+      CKAN__DATAPUSHER__URL: http://datapusher:8800
+      CKAN__DATAPUSHER__CALLBACK_URL_BASE: http://ckan:5000
+    volumes:
+      - ckan_storage:/var/lib/ckan
+      - ./ckan-extensions:/srv/app/src_extensions
+    depends_on:
+      db:
+        condition: service_healthy
+      solr:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "5000:5000"
+    networks:
+      - vigan_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/3/action/site_read"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 90s
+
+  # ─────────────────────────────────────────────────
+  # Datapusher — Automatic CSV → DataStore ingestion
+  # ─────────────────────────────────────────────────
+  datapusher:
+    image: ckan/ckan-base:2.10
+    container_name: vigan_datapusher
+    restart: unless-stopped
+    command: /bin/sh -c "pip install datapusher && datapusher -p 8800"
+    ports:
+      - "8800:8800"
+    networks:
+      - vigan_net
+
+  # ─────────────────────────────────────────────────
+  # PostgreSQL 16 — Primary database
+  # ─────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: vigan_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ckan
+      POSTGRES_PASSWORD: ckan
+      POSTGRES_DB: ckan
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - vigan_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ckan -d ckan"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  # ─────────────────────────────────────────────────
+  # Solr 9 — Full-text search index
+  # ─────────────────────────────────────────────────
+  solr:
+    image: ckan/ckan-solr:2.10-solr9
+    container_name: vigan_solr
+    restart: unless-stopped
+    volumes:
+      - solr_data:/var/solr
+    networks:
+      - vigan_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8983/solr/ckan/admin/ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ─────────────────────────────────────────────────
+  # Redis 7 — Session cache & job queue
+  # ─────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: vigan_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - vigan_net
+
+  # ─────────────────────────────────────────────────
+  # Nginx — Reverse proxy + TLS termination
+  # ─────────────────────────────────────────────────
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: vigan_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - ckan
+      - frontend
+    networks:
+      - vigan_net
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+
+  # ─────────────────────────────────────────────────
+  # Next.js Frontend — Public citizen-facing portal
+  # ─────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ../../frontend
+      dockerfile: Dockerfile
+    container_name: vigan_frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_CKAN_URL: http://ckan:5000
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    depends_on:
+      - ckan
+    networks:
+      - vigan_net
+
+# ─────────────────────────────────────────────────
+# Named volumes
+# ─────────────────────────────────────────────────
+volumes:
+  pg_data:
+    driver: local
+  solr_data:
+    driver: local
+  redis_data:
+    driver: local
+  ckan_storage:
+    driver: local
+
+# ─────────────────────────────────────────────────
+# Network
+# ─────────────────────────────────────────────────
+networks:
+  vigan_net:
+    driver: bridge

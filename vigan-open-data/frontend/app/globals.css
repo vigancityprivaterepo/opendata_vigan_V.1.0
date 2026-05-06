@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base ──────────────────────────────────────────────────────────────────── */
+@layer base {
+  html { scroll-behavior: smooth; }
+
+  body {
+    @apply font-body text-vigan-text bg-vigan-bg antialiased;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold leading-tight;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-vigan-secondary ring-offset-2 rounded;
+  }
+}
+
+/* ── Components ─────────────────────────────────────────────────────────────── */
+@layer components {
+
+  /* Buttons */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5
+           bg-vigan-primary text-white font-semibold rounded-lg
+           border-2 border-vigan-primary
+           transition-all duration-200
+           hover:bg-vigan-accent hover:border-vigan-accent
+           hover:-translate-y-0.5 hover:shadow-vigan-md
+           active:translate-y-0;
+  }
+
+  .btn-amber {
+    @apply inline-flex items-center gap-2 px-5 py-2.5
+           bg-vigan-gold text-[#1A2E28] font-bold rounded-lg
+           border-2 border-vigan-gold
+           transition-all duration-200
+           hover:bg-vigan-goldDk hover:border-vigan-goldDk
+           hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(245,158,11,0.35)]
+           active:translate-y-0;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-5 py-2.5
+           bg-transparent text-white font-semibold rounded-lg
+           border-2 border-white/40
+           transition-all duration-200
+           hover:bg-white/10 hover:border-white;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center gap-2 px-4 py-2
+           bg-transparent text-vigan-primary font-semibold rounded-lg
+           border-2 border-vigan-primary
+           transition-all duration-200
+           hover:bg-vigan-primary hover:text-white;
+  }
+
+  /* Section label */
+  .section-eyebrow {
+    @apply inline-block text-xs font-bold tracking-widest uppercase
+           text-vigan-gold bg-vigan-gold/10 border border-vigan-gold/25
+           rounded-full px-3 py-1 mb-4;
+  }
+
+  /* Section title with gold underline */
+  .section-title {
+    @apply font-display text-2xl md:text-3xl font-bold text-vigan-text;
+  }
+  .section-title::after {
+    content: '';
+    @apply block w-14 h-1 bg-vigan-gold rounded mt-2;
+  }
+  .section-title-center::after {
+    @apply mx-auto;
+  }
+
+  /* Card base */
+  .card {
+    @apply bg-white rounded-xl border border-vigan-border shadow-vigan-sm
+           transition-all duration-200;
+  }
+  .card:hover {
+    @apply shadow-vigan-lg -translate-y-0.5;
+  }
+
+  /* Format badge */
+  .format-badge {
+    @apply text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full;
+  }
+}
+
+/* ── Utilities ──────────────────────────────────────────────────────────────── */
+@layer utilities {
+  .text-balance  { text-wrap: balance; }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #6EE7B7 #F0FDF4;
+  }
+}

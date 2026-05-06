@@ -1,0 +1,51 @@
+# docker-compose.dev.yml — Development overrides
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+version: "3.8"
+
+services:
+
+  ckan:
+    restart: "no"
+    environment:
+      CKAN_DEBUG: "true"
+      CKAN_SITE_URL: http://localhost:5000
+      NEXT_PUBLIC_CKAN_URL: http://localhost:5000
+    volumes:
+      - ckan_storage:/var/lib/ckan
+      # Live-mount the extension so edits apply without rebuilding
+      - ../../ckan-extensions:/srv/app/src_extensions
+    ports:
+      - "5000:5000"
+
+  frontend:
+    restart: "no"
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_CKAN_URL: http://localhost:5000
+    command: npm run dev
+    volumes:
+      # Live-mount the Next.js source for hot-reload
+      - ../../frontend:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3000:3000"
+
+  db:
+    restart: "no"
+    ports:
+      # Expose DB for local GUI clients (e.g. DBeaver, TablePlus)
+      - "5432:5432"
+
+  solr:
+    restart: "no"
+    ports:
+      - "8983:8983"
+
+  redis:
+    restart: "no"
+    ports:
+      - "6379:6379"
+
+  nginx:
+    restart: "no"

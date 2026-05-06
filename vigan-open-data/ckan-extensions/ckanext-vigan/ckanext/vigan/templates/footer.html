@@ -1,0 +1,118 @@
+{% ckan_extends %}
+
+{% block footer %}
+<footer class="vigan-footer" role="contentinfo" aria-label="Site footer">
+
+  {# ── Main footer grid ─────────────────────────────────────────────────────── #}
+  <div class="vigan-footer__main">
+    <div class="vigan-footer__inner">
+
+      {# Column 1 — Identity #}
+      <div class="vigan-footer__col vigan-footer__col--brand">
+        <a href="/" class="vigan-footer__brand-link" aria-label="Vigan Open Data Home">
+          <img src="/images/vigan-logo.svg"
+               alt="City Government of Vigan Seal"
+               class="vigan-footer__logo" width="56" height="56">
+        </a>
+        <h2 class="vigan-footer__site-name">Vigan City<br>Open Data Portal</h2>
+        <p class="vigan-footer__desc">
+          Official open data initiative of the City Government of Vigan,
+          Ilocos Sur, Philippines — a UNESCO World Heritage City since 1999.
+        </p>
+        <p class="vigan-footer__disclaimer">
+          All data published on this portal is official government data.
+          Users are encouraged to verify information with source agencies.
+        </p>
+        <div class="vigan-footer__ckan-badge">
+          <span>Powered by</span>
+          <a href="https://ckan.org" target="_blank" rel="noopener noreferrer"
+             aria-label="CKAN Open Data Platform">
+            <strong>CKAN</strong>
+          </a>
+        </div>
+      </div>
+
+      {# Column 2 — Quick links #}
+      <div class="vigan-footer__col">
+        <h3 class="vigan-footer__heading">Explore Data</h3>
+        <ul class="vigan-footer__links" role="list">
+          <li><a href="{{ h.url_for('dataset.search') }}"    class="vigan-footer__link">All Datasets</a></li>
+          <li><a href="{{ h.url_for('organization.index') }}" class="vigan-footer__link">City Departments</a></li>
+          <li><a href="{{ h.url_for('group.index') }}"       class="vigan-footer__link">Browse Categories</a></li>
+          <li><a href="/api/3/action/package_list"           class="vigan-footer__link">CKAN API</a></li>
+          <li><a href="/api-docs"                            class="vigan-footer__link">API Documentation</a></li>
+        </ul>
+      </div>
+
+      {# Column 3 — Resources #}
+      <div class="vigan-footer__col">
+        <h3 class="vigan-footer__heading">Resources</h3>
+        <ul class="vigan-footer__links" role="list">
+          <li><a href="/about"             class="vigan-footer__link">About the Portal</a></li>
+          <li><a href="/privacy-policy"    class="vigan-footer__link">Privacy Policy</a></li>
+          <li><a href="/terms-of-use"      class="vigan-footer__link">Terms of Use</a></li>
+          <li><a href="/data-request"      class="vigan-footer__link">Request Dataset</a></li>
+          <li><a href="/feedback"          class="vigan-footer__link">Send Feedback</a></li>
+        </ul>
+      </div>
+
+      {# Column 4 — Contact #}
+      <div class="vigan-footer__col">
+        <h3 class="vigan-footer__heading">Contact Us</h3>
+        <address class="vigan-footer__address">
+          <p>
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            City Hall, Quezon Ave, Vigan City,<br>Ilocos Sur 2700, Philippines
+          </p>
+          <p>
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:opendata@vigan.gov.ph" class="vigan-footer__link">
+              opendata@vigan.gov.ph
+            </a>
+          </p>
+          <p>
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.37 2 2 0 0 1 3.58 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            (077) 722-2623
+          </p>
+        </address>
+        <div class="vigan-footer__socials">
+          <a href="https://www.facebook.com/VIGANCITYgov" target="_blank"
+             rel="noopener noreferrer" class="vigan-footer__social-link"
+             aria-label="Vigan City on Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="https://twitter.com/vigancity" target="_blank"
+             rel="noopener noreferrer" class="vigan-footer__social-link"
+             aria-label="Vigan City on Twitter/X">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l16 16M4 20L20 4"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  {# ── Bottom bar ────────────────────────────────────────────────────────────── #}
+  <div class="vigan-footer__bottom">
+    <div class="vigan-footer__bottom-inner">
+      <p class="vigan-footer__copyright">
+        © {{ h.vigan_year() }} City Government of Vigan. All rights reserved.
+      </p>
+      <nav class="vigan-footer__legal" aria-label="Legal links">
+        <a href="/privacy-policy" class="vigan-footer__legal-link">Privacy Policy</a>
+        <span aria-hidden="true">·</span>
+        <a href="/terms-of-use"   class="vigan-footer__legal-link">Terms of Use</a>
+        <span aria-hidden="true">·</span>
+        <a href="/contact"        class="vigan-footer__legal-link">Contact</a>
+        <span aria-hidden="true">·</span>
+        <a href="/feedback"       class="vigan-footer__legal-link">Feedback</a>
+      </nav>
+      <p class="vigan-footer__gov-notice">
+        This is an official Philippine government website. Read our
+        <a href="/privacy-policy" class="vigan-footer__legal-link">Privacy Policy</a>.
+      </p>
+    </div>
+  </div>
+
+</footer>
+{% endblock %}
