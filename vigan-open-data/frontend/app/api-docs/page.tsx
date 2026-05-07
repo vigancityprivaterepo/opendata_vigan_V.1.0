@@ -1,4 +1,4 @@
-import { Code2, Terminal, Database, BookOpen } from 'lucide-react'
+﻿import { Code2, Terminal, Database, BookOpen } from 'lucide-react'
 
 export const metadata = {
   title: 'API Documentation',
@@ -26,7 +26,7 @@ fetch('https://data.vigan.gov.ph/api/3/action/package_search?q=tourism&rows=5')
             <Terminal size={24} />
             <span className="font-mono font-bold tracking-widest text-sm">DEVELOPER HUB</span>
           </div>
-          <h1 className="font-display text-3xl md:text-4xl font-bold mb-4">REST API Documentation</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">REST API Documentation</h1>
           <p className="text-white/70 text-sm font-mono">
             Base URL: <span className="bg-white/10 px-2 py-1 rounded text-white">/api/3/action/</span>
           </p>
@@ -85,3 +85,4 @@ fetch('https://data.vigan.gov.ph/api/3/action/package_search?q=tourism&rows=5')
     </div>
   )
 }
+

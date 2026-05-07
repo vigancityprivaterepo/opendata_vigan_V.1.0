@@ -1,4 +1,4 @@
-import { ShieldCheck, Target, Globe } from 'lucide-react'
+﻿import { ShieldCheck, Target, Globe } from 'lucide-react'
 
 export const metadata = {
   title: 'About the Portal',
@@ -11,7 +11,7 @@ export default function AboutPage() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 py-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <h1 className="font-display text-3xl md:text-4xl font-bold text-vigan-primary mb-2">About Vigan Open Data</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-vigan-primary mb-2">About Vigan Open Data</h1>
           <p className="text-gray-600 text-lg max-w-2xl">
             Empowering citizens, researchers, and developers with accessible government data to drive innovation and transparency.
           </p>
@@ -77,3 +77,4 @@ export default function AboutPage() {
     </div>
   )
 }
+

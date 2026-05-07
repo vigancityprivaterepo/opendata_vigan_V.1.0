@@ -51,7 +51,7 @@ export default async function DatasetDetailPage({ params }: { params: { id: stri
                   )}
                 </div>
 
-                <h1 className="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
                   {dataset.title || dataset.name}
                 </h1>
 
@@ -90,7 +90,7 @@ export default async function DatasetDetailPage({ params }: { params: { id: stri
               {/* Resources List */}
               <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                 <div className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
-                  <h3 className="font-display font-semibold text-lg text-gray-900 flex items-center gap-2">
+                  <h3 className="font-semibold text-lg text-gray-900 flex items-center gap-2">
                     <Database className="text-vigan-primary" size={20} />
                     Data & Resources
                   </h3>
@@ -144,7 +144,7 @@ export default async function DatasetDetailPage({ params }: { params: { id: stri
 
               {/* Description */}
               <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="font-display font-semibold text-lg text-gray-900 mb-4 border-b border-gray-100 pb-3">
+                <h3 className="font-semibold text-lg text-gray-900 mb-4 border-b border-gray-100 pb-3">
                   About this Dataset
                 </h3>
                 <div className="prose prose-sm max-w-none text-gray-700">
@@ -159,7 +159,7 @@ export default async function DatasetDetailPage({ params }: { params: { id: stri
                 <div className="absolute top-0 right-0 p-4 opacity-10">
                   <Code2 size={100} />
                 </div>
-                <h3 className="font-display font-semibold text-lg text-white mb-2 flex items-center gap-2 relative z-10">
+                <h3 className="font-semibold text-lg text-white mb-2 flex items-center gap-2 relative z-10">
                   <Code2 className="text-emerald-300" size={20} /> Developer API Access
                 </h3>
                 <p className="text-white/70 text-sm mb-4 relative z-10">Use CKAN's Action API to programmatically interact with this dataset.</p>

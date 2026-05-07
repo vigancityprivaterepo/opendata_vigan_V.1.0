@@ -21,7 +21,7 @@ services:
       CKAN_SOLR_URL: http://solr:8983/solr/ckan
       CKAN_REDIS_URL: redis://redis:6379/1
       # Site configuration
-      CKAN_SITE_URL: http://localhost:5000
+      CKAN_SITE_URL: http://localhost:5001
       CKAN_SITE_TITLE: "Vigan City Open Data Portal"
       CKAN_SITE_DESCRIPTION: "Official open data portal of the City Government of Vigan"
       CKAN_SECRET_KEY: "dev-vigan-secret-key-change-me"

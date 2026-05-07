@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,98 +8,115 @@
   html { scroll-behavior: smooth; }
 
   body {
-    @apply font-body text-vigan-text bg-vigan-bg antialiased;
-    line-height: 1.6;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply text-vigan-text bg-white antialiased;
+    line-height: 1.5;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display font-bold leading-tight;
+    font-family: 'Inter', system-ui, sans-serif;
+    @apply font-semibold leading-tight;
+    letter-spacing: -0.02em;
   }
 
   *:focus-visible {
-    @apply outline-none ring-2 ring-vigan-secondary ring-offset-2 rounded;
+    @apply outline-none ring-2 ring-vigan-primary ring-offset-2;
   }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { @apply bg-gray-100; }
+  ::-webkit-scrollbar-thumb { @apply bg-gray-300 rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-gray-400; }
 }
 
 /* ── Components ─────────────────────────────────────────────────────────────── */
 @layer components {
 
-  /* Buttons */
   .btn-primary {
-    @apply inline-flex items-center gap-2 px-5 py-2.5
-           bg-vigan-primary text-white font-semibold rounded-lg
-           border-2 border-vigan-primary
-           transition-all duration-200
-           hover:bg-vigan-accent hover:border-vigan-accent
-           hover:-translate-y-0.5 hover:shadow-vigan-md
-           active:translate-y-0;
-  }
-
-  .btn-amber {
-    @apply inline-flex items-center gap-2 px-5 py-2.5
-           bg-vigan-gold text-[#1A2E28] font-bold rounded-lg
-           border-2 border-vigan-gold
-           transition-all duration-200
-           hover:bg-vigan-goldDk hover:border-vigan-goldDk
-           hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(245,158,11,0.35)]
-           active:translate-y-0;
-  }
-
-  .btn-ghost {
-    @apply inline-flex items-center gap-2 px-5 py-2.5
-           bg-transparent text-white font-semibold rounded-lg
-           border-2 border-white/40
-           transition-all duration-200
-           hover:bg-white/10 hover:border-white;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5
+           bg-vigan-primary text-white font-semibold rounded
+           border border-vigan-primary
+           transition-colors duration-150
+           hover:bg-vigan-accent hover:border-vigan-accent;
   }
 
   .btn-outline {
-    @apply inline-flex items-center gap-2 px-4 py-2
-           bg-transparent text-vigan-primary font-semibold rounded-lg
-           border-2 border-vigan-primary
-           transition-all duration-200
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2
+           bg-transparent text-vigan-primary font-semibold rounded
+           border border-vigan-primary
+           transition-colors duration-150
            hover:bg-vigan-primary hover:text-white;
   }
 
-  /* Section label */
-  .section-eyebrow {
-    @apply inline-block text-xs font-bold tracking-widest uppercase
-           text-vigan-gold bg-vigan-gold/10 border border-vigan-gold/25
-           rounded-full px-3 py-1 mb-4;
-  }
-
-  /* Section title with gold underline */
-  .section-title {
-    @apply font-display text-2xl md:text-3xl font-bold text-vigan-text;
-  }
-  .section-title::after {
-    content: '';
-    @apply block w-14 h-1 bg-vigan-gold rounded mt-2;
-  }
-  .section-title-center::after {
-    @apply mx-auto;
-  }
-
-  /* Card base */
-  .card {
-    @apply bg-white rounded-xl border border-vigan-border shadow-vigan-sm
-           transition-all duration-200;
-  }
-  .card:hover {
-    @apply shadow-vigan-lg -translate-y-0.5;
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5
+           bg-transparent text-white font-semibold rounded
+           border border-white/40
+           transition-colors duration-150
+           hover:bg-white/10 hover:border-white;
   }
 
   /* Format badge */
   .format-badge {
-    @apply text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full;
+    @apply text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded;
+  }
+
+  /* Gov top-bar link style */
+  .topbar-link {
+    @apply text-[11px] text-gray-500 hover:text-vigan-primary hover:underline transition-colors cursor-pointer;
+  }
+
+  /* Pill/tag chip */
+  .chip {
+    @apply inline-flex items-center gap-1 text-xs font-medium
+           bg-gray-100 text-gray-600 rounded px-2 py-0.5
+           hover:bg-vigan-light hover:text-vigan-primary transition-colors;
+  }
+
+  /* Search input */
+  .search-input {
+    @apply w-full py-3 pl-11 pr-4 bg-white border border-gray-300 rounded
+           text-base placeholder-gray-400
+           focus:outline-none focus:ring-2 focus:ring-vigan-primary/40
+           focus:border-vigan-primary transition-all duration-150;
   }
 }
 
 /* ── Utilities ──────────────────────────────────────────────────────────────── */
 @layer utilities {
-  .text-balance  { text-wrap: balance; }
-  .scrollbar-thin {
-    scrollbar-width: thin;
-    scrollbar-color: #6EE7B7 #F0FDF4;
-  }
+  .text-balance { text-wrap: balance; }
+}
+
+/* ── Hero wave animation ────────────────────────────────────────────────────── */
+@keyframes waveFlow {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── Skeleton loading ───────────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+/* ── Code block ─────────────────────────────────────────────────────────────── */
+.code-window {
+  background: #0d1117;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.code-window-bar {
+  background: rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
