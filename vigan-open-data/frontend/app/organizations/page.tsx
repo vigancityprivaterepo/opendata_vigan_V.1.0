@@ -1,6 +1,6 @@
 ﻿import { ckanAPI } from '@/lib/ckan'
 import Link from 'next/link'
-import { DEPARTMENTS } from '@/lib/utils'
+import { DEPARTMENTS, getCKANImageURL } from '@/lib/utils'
 import { Building2, Database, ArrowRight } from 'lucide-react'
 
 export const revalidate = 3600
@@ -46,6 +46,7 @@ export default async function OrganizationsPage() {
             {orgs.map((org, i) => {
               const meta    = DEPARTMENTS[org.name] ?? { icon: '🏢', short: org.name.toUpperCase().slice(0, 4) }
               const palette = ORG_COLORS[i % ORG_COLORS.length]
+              const imageUrl = getCKANImageURL(org.image_display_url || org.image_url)
               const initials = (org.title || org.name)
                 .split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase()
 
@@ -57,20 +58,29 @@ export default async function OrganizationsPage() {
                   {/* Top accent stripe */}
                   <div className={`h-1.5 ${palette.bg}`} />
 
+                  <div className="h-40 bg-gray-50 border-b border-gray-100 flex items-center justify-center overflow-hidden">
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt=""
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span className={`w-full h-full ${palette.bg} text-white text-3xl font-black flex items-center justify-center`}>
+                        {initials}
+                      </span>
+                    )}
+                  </div>
+
                   <div className="p-6 flex flex-col h-full">
-                    <div className="flex items-start gap-4 mb-4">
-                      {/* Icon */}
-                      <div className={`w-14 h-14 rounded ${palette.bg} flex items-center justify-center flex-shrink-0 shadow-sm`}>
-                        <span className="text-white text-lg font-black">{initials}</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h2 className="font-semibold text-base text-gray-900 leading-tight mb-1 group-hover:text-vigan-primary transition-colors">
-                          {org.title}
-                        </h2>
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                          {meta.short}
-                        </p>
-                      </div>
+                    <div className="mb-4">
+                      <h2 className="font-semibold text-base text-gray-900 leading-tight mb-1 group-hover:text-vigan-primary transition-colors">
+                        {org.title}
+                      </h2>
+                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                        {meta.short}
+                      </p>
                     </div>
 
                     <p className="text-sm text-gray-500 mb-5 flex-1 line-clamp-3 leading-relaxed">
@@ -109,4 +119,3 @@ export default async function OrganizationsPage() {
     </div>
   )
 }
-

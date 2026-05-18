@@ -46,6 +46,7 @@ export interface CKANOrganization {
   title: string
   description: string | null
   image_url: string | null
+  image_display_url?: string | null
   created: string
   state: string
   approval_status: string

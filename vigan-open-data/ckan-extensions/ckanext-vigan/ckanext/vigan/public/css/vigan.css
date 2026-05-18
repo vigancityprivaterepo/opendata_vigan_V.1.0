@@ -899,14 +899,24 @@ a:hover { color: var(--vigan-primary); }
   align-items: center;
   gap: 6px;
   font-size: 0.75rem;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--vigan-white);
+  border: 1px solid rgba(255,255,255,0.18);
   border-radius: var(--radius-md);
-  padding: 4px 10px;
-  color: rgba(255,255,255,0.6);
+  padding: 6px 10px;
+  color: var(--vigan-text-muted);
 }
-.vigan-footer__ckan-badge a { color: var(--vigan-gold); }
-.vigan-footer__ckan-badge a:hover { color: var(--vigan-gold-dk); }
+.vigan-footer__ckan-badge span {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.vigan-footer__ckan-badge a { display: inline-flex; align-items: center; }
+.vigan-footer__ckan-logo {
+  display: block;
+  width: 95px;
+  height: auto;
+}
 
 /* Column headings */
 .vigan-footer__heading {

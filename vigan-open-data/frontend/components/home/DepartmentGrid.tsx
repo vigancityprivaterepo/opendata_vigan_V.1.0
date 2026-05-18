@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { CKANOrganization } from '@/types/ckan'
-import { DEPARTMENTS } from '@/lib/utils'
+import { DEPARTMENTS, getCKANImageURL } from '@/lib/utils'
 import { ArrowRight } from 'lucide-react'
 
 interface Props { organizations: CKANOrganization[] }
@@ -33,6 +33,7 @@ export default function DepartmentGrid({ organizations }: Props) {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
           {organizations.map(org => {
             const meta = DEPARTMENTS[org.name] ?? {}
+            const imageUrl = getCKANImageURL(org.image_display_url || org.image_url)
             const initials = (org.title || org.name)
               .split(/\s+/)
               .map(w => w[0])
@@ -47,8 +48,19 @@ export default function DepartmentGrid({ organizations }: Props) {
                 className="group flex flex-col items-center text-center p-4 bg-white border border-gray-200 rounded hover:border-vigan-primary hover:bg-vigan-light transition-colors duration-150"
                 aria-label={`${org.title} — ${org.package_count ?? 0} datasets`}
               >
-                <div className="w-10 h-10 bg-vigan-primary rounded flex items-center justify-center mb-3 flex-shrink-0">
-                  <span className="text-white text-xs font-bold leading-none">{initials}</span>
+                <div className="w-20 h-20 bg-white border border-gray-200 rounded flex items-center justify-center mb-3 flex-shrink-0 overflow-hidden shadow-sm">
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt=""
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span className="w-full h-full bg-vigan-primary text-white text-base font-bold leading-none flex items-center justify-center">
+                      {initials}
+                    </span>
+                  )}
                 </div>
                 <span className="text-xs font-semibold text-gray-700 group-hover:text-vigan-primary mb-1 leading-tight line-clamp-2 min-h-[2rem] transition-colors">
                   {meta.short || org.title}

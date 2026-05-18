@@ -6,12 +6,12 @@ import type { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 
 const TOPICS: { label: string; topic: string; Icon: LucideIcon; color: string }[] = [
-  { label: 'Tourism',     topic: 'tourism',     Icon: Landmark,  color: 'text-emerald-600' },
-  { label: 'Budget',      topic: 'budget',      Icon: Wallet,    color: 'text-amber-500'   },
-  { label: 'Health',      topic: 'health',      Icon: Heart,     color: 'text-rose-500'    },
-  { label: 'Environment', topic: 'environment', Icon: Leaf,      color: 'text-green-600'   },
-  { label: 'Transport',   topic: 'transport',   Icon: Bus,       color: 'text-blue-500'    },
-  { label: 'Planning',    topic: 'planning',    Icon: Building2, color: 'text-violet-500'  },
+  { label: 'Tourism', topic: 'tourism', Icon: Landmark, color: 'text-emerald-600' },
+  { label: 'Budget', topic: 'budget', Icon: Wallet, color: 'text-amber-500' },
+  { label: 'Health', topic: 'health', Icon: Heart, color: 'text-rose-500' },
+  { label: 'Environment', topic: 'environment', Icon: Leaf, color: 'text-green-600' },
+  { label: 'Transport', topic: 'transport', Icon: Bus, color: 'text-blue-500' },
+  { label: 'Planning', topic: 'planning', Icon: Building2, color: 'text-violet-500' },
 ]
 
 export default function HeroSection() {
@@ -31,10 +31,10 @@ export default function HeroSection() {
       <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none" aria-hidden="true">
         <div className="absolute bottom-0 flex w-[200%]" style={{ animation: 'waveFlow 22s linear infinite' }}>
           <svg viewBox="0 0 1440 110" className="w-1/2 flex-shrink-0" preserveAspectRatio="none">
-            <path d="M0 60 C240 20,480 100,720 60 C960 20,1200 100,1440 60 L1440 110 L0 110 Z" fill="#065F46" fillOpacity="0.07"/>
+            <path d="M0 60 C240 20,480 100,720 60 C960 20,1200 100,1440 60 L1440 110 L0 110 Z" fill="#065F46" fillOpacity="0.07" />
           </svg>
           <svg viewBox="0 0 1440 110" className="w-1/2 flex-shrink-0" preserveAspectRatio="none">
-            <path d="M0 60 C240 20,480 100,720 60 C960 20,1200 100,1440 60 L1440 110 L0 110 Z" fill="#065F46" fillOpacity="0.07"/>
+            <path d="M0 60 C240 20,480 100,720 60 C960 20,1200 100,1440 60 L1440 110 L0 110 Z" fill="#065F46" fillOpacity="0.07" />
           </svg>
         </div>
       </div>
@@ -43,10 +43,10 @@ export default function HeroSection() {
       <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" aria-hidden="true">
         <div className="absolute bottom-0 flex w-[200%]" style={{ animation: 'waveFlow 14s linear infinite' }}>
           <svg viewBox="0 0 1440 90" className="w-1/2 flex-shrink-0" preserveAspectRatio="none">
-            <path d="M0 45 C360 5,720 85,1080 45 C1260 25,1380 65,1440 45 L1440 90 L0 90 Z" fill="#047857" fillOpacity="0.07"/>
+            <path d="M0 45 C360 5,720 85,1080 45 C1260 25,1380 65,1440 45 L1440 90 L0 90 Z" fill="#047857" fillOpacity="0.07" />
           </svg>
           <svg viewBox="0 0 1440 90" className="w-1/2 flex-shrink-0" preserveAspectRatio="none">
-            <path d="M0 45 C360 5,720 85,1080 45 C1260 25,1380 65,1440 45 L1440 90 L0 90 Z" fill="#047857" fillOpacity="0.07"/>
+            <path d="M0 45 C360 5,720 85,1080 45 C1260 25,1380 65,1440 45 L1440 90 L0 90 Z" fill="#047857" fillOpacity="0.07" />
           </svg>
         </div>
       </div>
@@ -55,10 +55,10 @@ export default function HeroSection() {
       <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none" aria-hidden="true">
         <div className="absolute bottom-0 flex w-[200%]" style={{ animation: 'waveFlow 9s linear infinite' }}>
           <svg viewBox="0 0 1440 80" className="w-1/2 flex-shrink-0" preserveAspectRatio="none">
-            <path d="M0 40 C180 10,360 70,540 40 C720 10,900 70,1080 40 C1260 10,1380 60,1440 40 L1440 80 L0 80 Z" fill="#10B981" fillOpacity="0.06"/>
+            <path d="M0 40 C180 10,360 70,540 40 C720 10,900 70,1080 40 C1260 10,1380 60,1440 40 L1440 80 L0 80 Z" fill="#10B981" fillOpacity="0.06" />
           </svg>
           <svg viewBox="0 0 1440 80" className="w-1/2 flex-shrink-0" preserveAspectRatio="none">
-            <path d="M0 40 C180 10,360 70,540 40 C720 10,900 70,1080 40 C1260 10,1380 60,1440 40 L1440 80 L0 80 Z" fill="#10B981" fillOpacity="0.06"/>
+            <path d="M0 40 C180 10,360 70,540 40 C720 10,900 70,1080 40 C1260 10,1380 60,1440 40 L1440 80 L0 80 Z" fill="#10B981" fillOpacity="0.06" />
           </svg>
         </div>
       </div>
@@ -74,7 +74,7 @@ export default function HeroSection() {
         <h1 className="text-5xl md:text-6xl font-bold leading-[1.1] mb-5 tracking-tight">
           <span className="text-gray-900">Vigan City&apos;s</span>
           <br />
-          <span className="text-gray-400 font-bold">open data portal</span>
+          <span className="text-gray-400 font-bold">Open Data Portal</span>
         </h1>
 
         {/* Subtitle */}

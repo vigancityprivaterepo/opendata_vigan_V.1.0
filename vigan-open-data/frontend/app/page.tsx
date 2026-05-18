@@ -78,7 +78,7 @@ export default async function HomePage() {
                   <span className="text-gray-500 select-none">$ </span>
                   <span className="text-white">curl </span>
                   <span className="text-emerald-300 break-all">
-                    &quot;https://data.vigan.gov.ph/api/3/action/package_search?q=tourism&amp;rows=5&quot;
+                    &quot;https://data.vigancity.gov.ph/api/3/action/package_search?q=tourism&amp;rows=5&quot;
                   </span>
                   {'\n\n'}
                   <span className="text-gray-500">{'{'}</span>{'\n'}

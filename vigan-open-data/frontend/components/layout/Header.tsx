@@ -46,10 +46,14 @@ export default function Header() {
       {/* ── Top government identity bar ──────────────────────────────────── */}
       <div className="bg-[#F0F0F0] border-b border-gray-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-1.5 flex items-center gap-3">
-          <div className="flex gap-0.5">
-            <span className="w-3 h-4 bg-[#EF3340] rounded-sm block" />
-            <span className="w-3 h-4 bg-white border border-gray-300 rounded-sm block" />
-          </div>
+          <Image
+            src="/logo.png"
+            alt="City Government of Vigan seal"
+            width={22}
+            height={22}
+            className="h-5 w-5 object-contain flex-shrink-0"
+            priority
+          />
           <span className="text-xs text-gray-600">
             An Official Website of the{' '}
             <strong className="font-semibold text-gray-800">City Government of Vigan</strong>

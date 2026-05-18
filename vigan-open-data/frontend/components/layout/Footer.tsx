@@ -36,11 +36,20 @@ export default function Footer() {
               href="https://ckan.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs bg-white/10 border border-white/15 text-emerald-200 hover:bg-white/20 rounded-md px-3 py-1.5 transition-colors"
+              className="inline-flex items-center gap-2 bg-white rounded-md px-3 py-2 transition-colors hover:bg-gray-100"
+              aria-label="Powered by CKAN"
             >
-              <Globe size={12} />
-              Powered by CKAN
-              <ExternalLink size={10} className="text-emerald-300/60" />
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
+                Powered by
+              </span>
+              <Image
+                src="/ckan_logo.svg"
+                alt="CKAN"
+                width={95}
+                height={20}
+                className="h-5 w-auto object-contain"
+              />
+              <ExternalLink size={10} className="text-gray-400" />
             </a>
           </div>
 
@@ -171,4 +180,3 @@ export default function Footer() {
     </footer>
   )
 }
-

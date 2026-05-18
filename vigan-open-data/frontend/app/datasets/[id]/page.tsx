@@ -164,7 +164,7 @@ export default async function DatasetDetailPage({ params }: { params: { id: stri
                 </h3>
                 <p className="text-white/70 text-sm mb-4 relative z-10">Use CKAN's Action API to programmatically interact with this dataset.</p>
                 <div className="bg-black/40 border border-white/10 rounded-lg p-4 font-mono text-xs text-emerald-300 overflow-x-auto relative z-10">
-                  curl {process.env.NEXT_PUBLIC_CKAN_URL || 'https://data.vigan.gov.ph'}/api/3/action/package_show?id={dataset.name}
+                  curl {process.env.NEXT_PUBLIC_CKAN_URL || 'https://data.vigancity.gov.ph'}/api/3/action/package_show?id={dataset.name}
                 </div>
               </div>
 

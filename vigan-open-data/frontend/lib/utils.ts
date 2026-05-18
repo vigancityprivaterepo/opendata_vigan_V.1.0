@@ -85,3 +85,11 @@ export function getResourceDownloadURL(resourceUrl: string): string {
   const base = process.env.NEXT_PUBLIC_CKAN_URL || 'http://localhost:5000'
   return `${base}${resourceUrl}`
 }
+
+/** Resolve CKAN-hosted image URLs for server and browser rendering */
+export function getCKANImageURL(imageUrl: string | null | undefined): string {
+  if (!imageUrl) return ''
+  if (imageUrl.startsWith('http')) return imageUrl
+  const base = process.env.NEXT_PUBLIC_CKAN_URL || 'http://localhost:5000'
+  return `${base}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`
+}
