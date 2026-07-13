@@ -43,6 +43,85 @@ def wait_for_postgres(max_retries=30, delay=5):
     sys.exit(1)
 
 
+def apply_datastore_permissions():
+    """Generate the datastore SQL and execute it against PostgreSQL."""
+    print("▶  Generating datastore permission SQL", flush=True)
+    sql = subprocess.check_output(
+        ["ckan", "--config=/srv/app/ckan.ini", "datastore", "set-permissions"],
+        text=True
+    )
+
+    db_url = os.environ.get("CKAN_SQLALCHEMY_URL", "")
+    env = os.environ.copy()
+    if "://" in db_url and "@" in db_url:
+        # Extract password from postgresql://user:pass@host/db for psql auth.
+        credentials = db_url.split("://", 1)[1].split("@", 1)[0]
+        if ":" in credentials:
+            env["PGPASSWORD"] = credentials.split(":", 1)[1]
+
+    print("▶  Applying datastore permission SQL via psql", flush=True)
+    result = subprocess.run(
+        ["psql", db_url],
+        input=sql,
+        text=True,
+        env=env
+    )
+    if result.returncode != 0:
+        print("✗  Failed to apply datastore permission SQL", file=sys.stderr)
+        sys.exit(result.returncode)
+
+
+def configure_xloader_token(sysadmin_name):
+    """Generate a sysadmin API token and persist it into ckan.ini for XLoader."""
+    print(f"▶  Generating XLoader API token for '{sysadmin_name}'", flush=True)
+    output = subprocess.check_output(
+        [
+            "ckan", "--config=/srv/app/ckan.ini",
+            "user", "token", "add", sysadmin_name, "xloader_token"
+        ],
+        text=True
+    )
+    token = output.strip().splitlines()[-1].strip()
+
+    ckan_ini = "/srv/app/ckan.ini"
+    with open(ckan_ini, "r", encoding="utf-8") as fh:
+        lines = fh.readlines()
+
+    setting = f"ckanext.xloader.api_token = {token}\n"
+    filtered_lines = [
+        line for line in lines
+        if not line.strip().startswith("ckanext.xloader.api_token")
+    ]
+
+    if len(filtered_lines) == len(lines):
+        insert_at = 0
+        for idx, line in enumerate(filtered_lines):
+            if line.startswith("ckanext.xloader.job_timeout = "):
+                insert_at = idx + 1
+                break
+        filtered_lines.insert(insert_at, setting)
+    else:
+        insert_at = 0
+        for idx, line in enumerate(filtered_lines):
+            if line.startswith("ckanext.xloader.job_timeout = "):
+                insert_at = idx + 1
+                break
+        filtered_lines.insert(insert_at, setting)
+
+    with open(ckan_ini, "w", encoding="utf-8") as fh:
+        fh.writelines(filtered_lines)
+
+    print("✅ XLoader API token written to ckan.ini", flush=True)
+
+
+def refresh_tracking_summary():
+    """Build the initial tracking summary so tracking-backed stats are queryable."""
+    print("Refreshing CKAN tracking summary", flush=True)
+    run(["ckan", "--config=/srv/app/ckan.ini", "tracking", "update"])
+    run(["ckan", "--config=/srv/app/ckan.ini", "search-index", "rebuild"])
+    print("Tracking summary refreshed", flush=True)
+
+
 def main():
     print("\n══════════════════════════════════════════")
     print("  Vigan City Open Data Portal — prerun   ")
@@ -54,15 +133,18 @@ def main():
     print("\n── Step 1: DB init / upgrade ──")
     run(["ckan", "--config=/srv/app/ckan.ini", "db", "upgrade"])
 
-    # 2. Initialize DataStore (creates read-only user + sets permissions)
+    # 2. Initialize DataStore permissions and metadata view.
     print("\n── Step 2: DataStore init ──")
-    run(["ckan", "--config=/srv/app/ckan.ini", "datastore", "set-permissions"],
-        check=False)
+    apply_datastore_permissions()
 
     # 3. Create sysadmin (idempotent — no-ops if already exists)
     sysadmin_name = os.environ.get("CKAN_SYSADMIN_NAME", "vigancity_admin")
-    sysadmin_pass = os.environ.get("CKAN_SYSADMIN_PASSWORD", "VCAdmin@2026!")
+    sysadmin_pass = os.environ.get("CKAN_SYSADMIN_PASSWORD", "")
     sysadmin_email = os.environ.get("CKAN_SYSADMIN_EMAIL", "admin@vigan.gov.ph")
+
+    if not sysadmin_pass:
+        print("✗  CKAN_SYSADMIN_PASSWORD is required.", file=sys.stderr)
+        sys.exit(1)
 
     print(f"\n── Step 3: Ensuring sysadmin '{sysadmin_name}' exists ──")
     check = subprocess.run(
@@ -83,6 +165,11 @@ def main():
         print(f"✅ Sysadmin '{sysadmin_name}' created.", flush=True)
     else:
         print(f"ℹ  Sysadmin '{sysadmin_name}' already exists — skipping.", flush=True)
+
+    print("\n── Step 4: XLoader token ──")
+    configure_xloader_token(sysadmin_name)
+    print("\nStep 5: Tracking summary")
+    refresh_tracking_summary()
 
     print("\n✅ prerun.py complete — handing off to CKAN server.\n")
 

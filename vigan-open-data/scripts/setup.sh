@@ -30,6 +30,7 @@ echo "4. Running Database Migrations and initial Sysadmin setup..."
 echo "5. Seeding default Vigan Organizations and Datasets..."
 docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml exec ckan bash -c "mkdir -p /tmp/scripts"
 docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml cp scripts/seed-data.sh ckan:/tmp/scripts/seed-data.sh
+docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml cp sample-datasets ckan:/tmp/sample-datasets
 docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml exec ckan chmod +x /tmp/scripts/seed-data.sh
 docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml exec ckan /tmp/scripts/seed-data.sh
 
@@ -41,8 +42,6 @@ echo "🌐 Public Portal (Next.js): http://localhost:8080"
 echo "⚙️  CKAN Admin Panel:       http://localhost:8080/user/login"
 echo "🔌 Direct CKAN API:         http://localhost:5001/api/3/action/site_read"
 echo ""
-echo "🔑 Default Admin Credentials:"
-echo "   Username: vigancity_admin"
-echo "   Password: VCAdmin@2026!"
+echo "🔑 Admin credentials are loaded from docker/.env"
 echo ""
 echo "To view logs, run: cd docker && docker-compose logs -f"

@@ -1,0 +1,23 @@
+{% ckan_extends %}
+
+{% block primary_content_inner %}
+  {% if activity_types is defined %}
+    {% snippet 'snippets/activity_type_selector.html', id=id, activity_type=activity_type, activity_types=activity_types, blueprint='dataset.activity' %}
+  {% endif %}
+
+  {% if activity_type and activity_stream|length == 0 %}
+    <div class="vigan-empty-state vigan-empty-state--activity">
+      <div class="vigan-empty-state__icon" aria-hidden="true">
+        <i class="fa fa-filter"></i>
+      </div>
+      <h2 class="vigan-empty-state__title">{{ _('No activity for this type') }}</h2>
+      <p class="vigan-empty-state__text">
+        {{ _('Try selecting all activity types to see the full history for this dataset.') }}
+      </p>
+    </div>
+  {% else %}
+    {% snippet 'snippets/stream.html', activity_stream=activity_stream, id=id, object_type='package' %}
+  {% endif %}
+
+  {% snippet 'snippets/pagination.html', newer_activities_url=newer_activities_url, older_activities_url=older_activities_url %}
+{% endblock %}

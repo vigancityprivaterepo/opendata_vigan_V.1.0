@@ -1,0 +1,18 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" fill="#FFF7F7"/>
+  <rect y="468" width="1200" height="252" fill="#FCE6E6"/>
+  <path d="M0 153C113 193 226 201 330 175C417 154 493 98 602 98C701 98 774 163 865 184C979 210 1084 189 1200 118V0H0V153Z" fill="#F8D9DA"/>
+  <rect x="201" y="196" width="304" height="338" rx="28" fill="white"/>
+  <rect x="321" y="236" width="64" height="255" rx="18" fill="#F43F5E"/>
+  <rect x="231" y="332" width="243" height="64" rx="18" fill="#F43F5E"/>
+  <rect x="598" y="231" width="401" height="278" rx="32" fill="white"/>
+  <rect x="636" y="286" width="328" height="34" rx="17" fill="#FCE7E7"/>
+  <rect x="636" y="344" width="244" height="34" rx="17" fill="#FBCACA"/>
+  <rect x="636" y="402" width="286" height="34" rx="17" fill="#F9B1B6"/>
+  <circle cx="947" cy="273" r="26" fill="#FB7185"/>
+  <path d="M947 253V293" stroke="white" stroke-width="10" stroke-linecap="round"/>
+  <path d="M967 273H927" stroke="white" stroke-width="10" stroke-linecap="round"/>
+  <rect x="608" y="122" width="277" height="84" rx="24" fill="white" fill-opacity="0.78"/>
+  <text x="642" y="161" fill="#8B2234" font-family="Arial, sans-serif" font-size="34" font-weight="700">Health Facilities</text>
+  <text x="642" y="191" fill="#8F5862" font-family="Arial, sans-serif" font-size="22">Clinics, centers, and services</text>
+</svg>

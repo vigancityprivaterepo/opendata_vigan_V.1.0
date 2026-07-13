@@ -1,0 +1,102 @@
+{
+  "type": "FeatureCollection",
+  "name": "vigan_flood_hazard_priority_areas_sample",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "hazard_id": "FLD-001",
+        "barangay": "San Julian Norte",
+        "hazard_level": "High",
+        "flood_depth_m": 1.5,
+        "priority_action": "Pre-emptive evacuation"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [120.3842, 17.5745],
+            [120.3851, 17.5743],
+            [120.3857, 17.5746],
+            [120.3855, 17.5752],
+            [120.3849, 17.5755],
+            [120.3841, 17.5752],
+            [120.3842, 17.5745]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hazard_id": "FLD-002",
+        "barangay": "Paoa",
+        "hazard_level": "Moderate",
+        "flood_depth_m": 0.8,
+        "priority_action": "Drainage monitoring"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [120.3837, 17.5717],
+            [120.3846, 17.5715],
+            [120.3850, 17.5719],
+            [120.3848, 17.5724],
+            [120.3841, 17.5725],
+            [120.3835, 17.5722],
+            [120.3837, 17.5717]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hazard_id": "FLD-003",
+        "barangay": "Pantay Fatima",
+        "hazard_level": "Low",
+        "flood_depth_m": 0.3,
+        "priority_action": "Routine inspection"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [120.3862, 17.5746],
+            [120.3870, 17.5745],
+            [120.3873, 17.5749],
+            [120.3871, 17.5754],
+            [120.3865, 17.5755],
+            [120.3860, 17.5751],
+            [120.3862, 17.5746]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hazard_id": "FLD-004",
+        "barangay": "Tamag",
+        "hazard_level": "Moderate",
+        "flood_depth_m": 0.9,
+        "priority_action": "Canal clearing"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [120.3858, 17.5713],
+            [120.3867, 17.5712],
+            [120.3871, 17.5716],
+            [120.3869, 17.5721],
+            [120.3862, 17.5723],
+            [120.3856, 17.5719],
+            [120.3858, 17.5713]
+          ]
+        ]
+      }
+    }
+  ]
+}

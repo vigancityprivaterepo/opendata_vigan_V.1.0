@@ -1,0 +1,9 @@
+route_id,barangay,collection_day,time_window,truck_code,waste_type,drop_off_point,status
+SW-01,I,Monday,06:00-09:00,CENRO-TRK-01,Residual,City Transfer Station,Active
+SW-02,II,Monday,09:30-12:00,CENRO-TRK-01,Residual,City Transfer Station,Active
+SW-03,III,Tuesday,06:00-09:00,CENRO-TRK-02,Biodegradable,Composting Hub,Active
+SW-04,VIII,Tuesday,09:30-12:00,CENRO-TRK-02,Residual,City Transfer Station,Active
+SW-05,IX,Wednesday,06:00-09:00,CENRO-TRK-03,Residual,City Transfer Station,Active
+SW-06,Pantay Fatima,Wednesday,09:30-12:00,CENRO-TRK-03,Recyclable,Materials Recovery Facility,Active
+SW-07,Cabaroan Daya,Thursday,06:00-09:30,CENRO-TRK-04,Biodegradable,Composting Hub,Active
+SW-08,Paoa,Friday,06:00-09:30,CENRO-TRK-05,Residual,City Transfer Station,Active

@@ -8,26 +8,31 @@ export const metadata: Metadata = {
     default: 'Vigan City Open Data Portal',
     template: '%s | Vigan City Open Data Portal',
   },
+  icons: {
+    icon: [{ url: '/favicon.ico?v=2', type: 'image/x-icon' }],
+    shortcut: '/favicon.ico?v=2',
+    apple: '/favicon.ico?v=2',
+  },
   description:
     'Official open data portal of the City Government of Vigan, Ilocos Sur, Philippines — a UNESCO World Heritage City. Discover and download government datasets.',
   keywords: ['Vigan', 'open data', 'Ilocos Sur', 'Philippines', 'government data', 'datasets', 'UNESCO'],
-  authors: [{ name: 'City Government of Vigan — ICT Office', url: 'https://vigan.gov.ph' }],
+  authors: [{ name: 'City Government of Vigan — ICT Office', url: 'https://vigancity.gov.ph' }],
   openGraph: {
-    type:        'website',
-    siteName:    'Vigan City Open Data Portal',
-    title:       'Vigan City Open Data Portal',
+    type: 'website',
+    siteName: 'Vigan City Open Data Portal',
+    title: 'Vigan City Open Data Portal',
     description: 'Official open data of the City Government of Vigan, Philippines',
-    locale:      'en_PH',
+    locale: 'en_PH',
   },
   twitter: {
-    card:  'summary_large_image',
+    card: 'summary_large_image',
     title: 'Vigan City Open Data Portal',
   },
   robots: { index: true, follow: true },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#065F46',
+  themeColor: '#022C22',
 }
 
 export default function RootLayout({
@@ -41,7 +46,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
           rel="stylesheet"
         />
       </head>

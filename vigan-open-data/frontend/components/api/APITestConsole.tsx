@@ -5,11 +5,16 @@ import { Play, Terminal } from 'lucide-react'
 
 type Language = 'curl' | 'python' | 'javascript'
 
-const codeExamples: Record<Language, string> = {
-  curl: `curl "http://localhost:8080/api/3/action/package_search?q=tourism&rows=5"`,
-  python: `import requests
+interface Props {
+  baseEndpoint: string
+}
 
-url = "http://localhost:8080/api/3/action/package_search"
+function buildCodeExamples(baseEndpoint: string): Record<Language, string> {
+  return {
+    curl: `curl "${baseEndpoint}/package_search?q=tourism&rows=5"`,
+    python: `import requests
+
+url = "${baseEndpoint}/package_search"
 params = {"q": "tourism", "rows": 5}
 
 response = requests.get(url, params=params, timeout=15)
@@ -18,7 +23,7 @@ data = response.json()
 if data["success"]:
     for dataset in data["result"]["results"]:
         print(dataset["title"])`,
-  javascript: `const url = new URL('/api/3/action/package_search', window.location.origin)
+    javascript: `const url = new URL('/api/3/action/package_search', window.location.origin)
 url.searchParams.set('q', 'tourism')
 url.searchParams.set('rows', '5')
 
@@ -30,6 +35,7 @@ if (data.success) {
     console.log(dataset.title)
   })
 }`,
+  }
 }
 
 const fallbackResponse = `{
@@ -47,12 +53,13 @@ const fallbackResponse = `{
   }
 }`
 
-export default function APITestConsole() {
+export default function APITestConsole({ baseEndpoint }: Props) {
   const [language, setLanguage] = useState<Language>('curl')
   const [responseText, setResponseText] = useState(fallbackResponse)
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
 
-  const code = useMemo(() => codeExamples[language], [language])
+  const codeExamples = useMemo(() => buildCodeExamples(baseEndpoint), [baseEndpoint])
+  const code = useMemo(() => codeExamples[language], [codeExamples, language])
 
   async function testRequest() {
     setStatus('loading')

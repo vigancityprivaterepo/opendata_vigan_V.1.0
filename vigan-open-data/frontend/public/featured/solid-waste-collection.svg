@@ -1,0 +1,16 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" fill="#F1FBF4"/>
+  <rect y="465" width="1200" height="255" fill="#D9F0DD"/>
+  <path d="M0 198C99 246 182 258 279 229C364 203 422 129 544 136C636 141 698 198 779 215C864 233 954 217 1031 178C1088 149 1144 110 1200 92V0H0V198Z" fill="#C4EBCB"/>
+  <path d="M92 546C169 533 242 499 312 440C361 399 448 355 535 364C621 373 691 454 776 462C867 471 951 403 1037 338C1085 302 1139 276 1200 263" stroke="#0F766E" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M84 602C173 584 267 546 344 492C424 435 476 395 560 404C632 412 687 464 773 489C851 512 940 489 1024 444C1087 410 1144 375 1200 353" stroke="#34D399" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="12 18"/>
+  <rect x="156" y="406" width="120" height="116" rx="18" fill="#F59E0B"/>
+  <rect x="136" y="382" width="162" height="34" rx="12" fill="#1F2937"/>
+  <circle cx="183" cy="539" r="23" fill="#1F2937"/>
+  <circle cx="254" cy="539" r="23" fill="#1F2937"/>
+  <rect x="194" y="329" width="44" height="65" rx="12" fill="#16A34A"/>
+  <path d="M216 313C231 294 260 295 271 316C278 329 274 350 254 358C232 349 221 333 216 313Z" fill="#22C55E"/>
+  <rect x="803" y="246" width="237" height="153" rx="24" fill="white" fill-opacity="0.72"/>
+  <text x="838" y="301" fill="#125041" font-family="Arial, sans-serif" font-size="34" font-weight="700">Collection Routes</text>
+  <text x="838" y="337" fill="#557568" font-family="Arial, sans-serif" font-size="22">Street-level pickup planning</text>
+</svg>

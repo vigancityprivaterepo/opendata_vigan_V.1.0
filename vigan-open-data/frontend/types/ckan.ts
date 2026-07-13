@@ -28,6 +28,10 @@ export interface CKANResource {
   package_id: string
   position: number
   resource_type: string | null
+  tracking_summary?: {
+    recent: number
+    total: number
+  }
 }
 
 // ── Tag ──────────────────────────────────────────────────────────────────────
@@ -83,6 +87,10 @@ export interface CKANDataset {
   tags: CKANTag[]
   groups: CKANGroup[]
   extras: CKANExtra[]
+  tracking_summary?: {
+    recent: number
+    total: number
+  }
 }
 
 // ── Group (Category) ──────────────────────────────────────────────────────────
@@ -119,6 +127,7 @@ export interface CKANUser {
 export interface CKANPackageSearchResult {
   count: number
   results: CKANDataset[]
+  sort?: string
   facets?: Record<string, Record<string, number>>
   search_facets?: Record<string, {
     items: Array<{ name: string; display_name: string; count: number }>
@@ -130,7 +139,8 @@ export interface CKANPackageSearchResult {
 export interface CKANSiteStats {
   datasetCount: number
   organizationCount: number
-  tagCount: number
+  groupCount: number
+  downloads: number
 }
 
 // ── Query params for dataset listing ─────────────────────────────────────────
@@ -146,4 +156,12 @@ export interface DatasetListParams {
   organization?: string
   groups?: string
   format?: string
+}
+
+export interface DatasetListResponse {
+  result: CKANPackageSearchResult
+  organizations: CKANOrganization[]
+  page: number
+  pageSize: number
+  totalPages: number
 }

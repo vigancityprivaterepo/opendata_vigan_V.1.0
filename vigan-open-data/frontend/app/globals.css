@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,9 +14,9 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter', system-ui, sans-serif;
-    @apply font-semibold leading-tight;
-    letter-spacing: -0.02em;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    @apply font-bold leading-tight;
+    letter-spacing: -0.025em;
   }
 
   *:focus-visible {
@@ -24,27 +24,29 @@
   }
 
   ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { @apply bg-gray-100; }
-  ::-webkit-scrollbar-thumb { @apply bg-gray-300 rounded-full; }
-  ::-webkit-scrollbar-thumb:hover { @apply bg-gray-400; }
+  ::-webkit-scrollbar-track { @apply bg-vigan-surface; }
+  ::-webkit-scrollbar-thumb { @apply bg-vigan-border rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-vigan-borderDk; }
 }
 
 /* ── Components ─────────────────────────────────────────────────────────────── */
 @layer components {
 
+  /* ── Buttons ── */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-5 py-2.5
            bg-vigan-primary text-white font-semibold rounded
            border border-vigan-primary
-           transition-colors duration-150
-           hover:bg-vigan-accent hover:border-vigan-accent;
+           transition-all duration-200
+           hover:bg-vigan-accent hover:border-vigan-accent
+           hover:-translate-y-px hover:shadow-card-hover;
   }
 
   .btn-outline {
     @apply inline-flex items-center justify-center gap-2 px-4 py-2
            bg-transparent text-vigan-primary font-semibold rounded
            border border-vigan-primary
-           transition-colors duration-150
+           transition-all duration-200
            hover:bg-vigan-primary hover:text-white;
   }
 
@@ -52,39 +54,103 @@
     @apply inline-flex items-center justify-center gap-2 px-5 py-2.5
            bg-transparent text-white font-semibold rounded
            border border-white/40
-           transition-colors duration-150
+           transition-all duration-200
            hover:bg-white/10 hover:border-white;
   }
 
-  /* Format badge */
+  /* ── Format badge ── */
   .format-badge {
-    @apply text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded;
+    @apply text-[10px] font-bold tracking-widest uppercase
+           px-2.5 py-0.5 rounded-md
+           ring-1 ring-inset ring-white/20
+           shadow-sm;
+    font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+    letter-spacing: 0.08em;
   }
 
-  /* Gov top-bar link style */
+  /* ── Gov top-bar link style ── */
   .topbar-link {
-    @apply text-[11px] text-gray-500 hover:text-vigan-primary hover:underline transition-colors cursor-pointer;
+    @apply text-[11px] font-semibold text-vigan-primary hover:text-vigan-accent hover:underline transition-colors cursor-pointer;
   }
 
-  /* Pill/tag chip */
+  /* ── Pill/tag chip ── */
   .chip {
-    @apply inline-flex items-center gap-1 text-xs font-medium
-           bg-gray-100 text-gray-600 rounded px-2 py-0.5
-           hover:bg-vigan-light hover:text-vigan-primary transition-colors;
+    @apply inline-flex items-center gap-1.5 text-[11px] font-semibold
+           bg-vigan-primary/[0.07] text-vigan-primary
+           rounded-full px-3 py-1
+           border border-vigan-primary/20
+           hover:bg-vigan-primary/[0.14] hover:border-vigan-primary/40
+           transition-all duration-150 cursor-default select-none;
   }
 
-  /* Search input */
+  .chip::before {
+    content: '';
+    @apply block w-1.5 h-1.5 rounded-full bg-vigan-primary/60 flex-shrink-0;
+  }
+
+  /* ── Search input ── */
   .search-input {
     @apply w-full py-3 pl-11 pr-4 bg-white border border-gray-300 rounded
            text-base placeholder-gray-400
            focus:outline-none focus:ring-2 focus:ring-vigan-primary/40
            focus:border-vigan-primary transition-all duration-150;
   }
+
+  /* ── Section heading accent bar ── */
+  .section-heading-accent {
+    @apply relative pl-4 before:absolute before:left-0 before:top-0 before:bottom-0
+           before:w-1 before:rounded-full before:bg-vigan-secondary;
+  }
+
+  /* ── Dot-grid background ── */
+  .dot-grid {
+    background-image: radial-gradient(circle, #A7F3D0 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  /* ── Hero geometric pattern overlay ── */
+  .hero-pattern {
+    background-image:
+      repeating-linear-gradient(
+        60deg,
+        transparent,
+        transparent 40px,
+        rgba(16,185,129,0.04) 40px,
+        rgba(16,185,129,0.04) 41px
+      ),
+      repeating-linear-gradient(
+        -60deg,
+        transparent,
+        transparent 40px,
+        rgba(16,185,129,0.04) 40px,
+        rgba(16,185,129,0.04) 41px
+      );
+  }
+
+  /* ── Card ── */
+  .data-card {
+    @apply bg-white border border-gray-200 rounded-xl shadow-card
+           transition-all duration-200
+           hover:shadow-card-deep hover:-translate-y-0.5 hover:border-vigan-border;
+  }
+
+  /* ── Stat number ── */
+  .stat-number {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    @apply text-5xl font-extrabold tabular-nums;
+    letter-spacing: -0.04em;
+  }
+
+  /* ── Section divider gradient ── */
+  .emerald-top-bar {
+    @apply h-1 bg-gradient-to-r from-vigan-primary via-vigan-secondary to-vigan-accent;
+  }
 }
 
 /* ── Utilities ──────────────────────────────────────────────────────────────── */
 @layer utilities {
   .text-balance { text-wrap: balance; }
+  .font-display { font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; }
 }
 
 /* ── Hero wave animation ────────────────────────────────────────────────────── */
@@ -99,7 +165,7 @@
   100% { background-position:  200% 0; }
 }
 .skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, #ECFDF5 25%, #D1FAE5 50%, #ECFDF5 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 4px;
@@ -109,7 +175,7 @@
 .code-window {
   background: #0d1117;
   border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
 }
 .code-window-bar {
@@ -119,4 +185,19 @@
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+/* ── Animate fade in ─────────────────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out both;
+}
+
+/* ── Heritage SVG watermark (used in hero) ────────────────────────────────── */
+.heritage-silhouette {
+  opacity: 0.06;
+  fill: #A7F3D0;
 }

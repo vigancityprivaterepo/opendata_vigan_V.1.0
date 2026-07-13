@@ -5,10 +5,12 @@
 import type {
   CKANAPIResponse,
   CKANDataset,
+  CKANGroup,
   CKANOrganization,
   CKANPackageSearchResult,
   CKANSiteStats,
   CKANTag,
+  DatasetListResponse,
   DatasetListParams,
 } from '@/types/ckan'
 
@@ -18,8 +20,8 @@ import type {
 
 function getCKANBaseURL(): string {
   if (typeof window === 'undefined') {
-    // Server-side render or API route
-    return process.env.NEXT_PUBLIC_CKAN_URL || 'http://ckan:5000'
+    // Server-side render or API route should prefer the internal CKAN service.
+    return process.env.CKAN_INTERNAL_URL || process.env.NEXT_PUBLIC_CKAN_URL || 'http://ckan:5000'
   }
   // Client-side — use the Next.js rewrite proxy to avoid CORS
   return ''
@@ -28,7 +30,9 @@ function getCKANBaseURL(): string {
 // ── Fetch wrapper ─────────────────────────────────────────────────────────────
 async function ckanFetch<T>(
   action: string,
-  params: Record<string, string | number | boolean | string[]> = {}
+  params: Record<string, string | number | boolean | string[]> = {},
+  revalidateSeconds = 3600,
+  method: 'GET' | 'POST' = 'GET'
 ): Promise<T> {
   const base = getCKANBaseURL()
   const endpoint = base
@@ -38,17 +42,20 @@ async function ckanFetch<T>(
   const query = new URLSearchParams()
   Object.entries(params).forEach(([key, value]) => {
     if (Array.isArray(value)) {
-      value.forEach((v) => query.append(key, v))
+      if (key === 'facet.field') query.set(key, JSON.stringify(value))
+      else value.forEach((v) => query.append(key, v))
     } else if (value !== undefined && value !== null && value !== '') {
       query.set(key, String(value))
     }
   })
 
-  const url = `${endpoint}?${query.toString()}`
+  const url = method === 'GET' ? `${endpoint}?${query.toString()}` : endpoint
 
   const res = await fetch(url, {
-    next: { revalidate: 60 }, // ISR: revalidate every 60 seconds
+    method,
+    next: { revalidate: revalidateSeconds },
     headers: { 'Content-Type': 'application/json' },
+    body: method === 'POST' ? JSON.stringify(params) : undefined,
   })
 
   if (!res.ok) {
@@ -64,6 +71,39 @@ async function ckanFetch<T>(
   }
 
   return json.result
+}
+
+let totalDownloadsCache:
+  | {
+      expiresAt: number
+      value: number
+    }
+  | null = null
+
+const PRIMARY_CATEGORY_TAGS = [
+  'tourism',
+  'drrm',
+  'health',
+  'planning',
+  'business',
+  'budget',
+  'environment',
+]
+
+async function getTotalResourceTracking(): Promise<number> {
+  const now = Date.now()
+  if (totalDownloadsCache && totalDownloadsCache.expiresAt > now) {
+    return totalDownloadsCache.value
+  }
+
+  const totalDownloads = await ckanFetch<number>('vigan_total_downloads', {}, 60, 'POST')
+
+  totalDownloadsCache = {
+    value: totalDownloads,
+    expiresAt: now + 60 * 1000,
+  }
+
+  return totalDownloads
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -87,17 +127,18 @@ export const ckanAPI = {
     if (params.organization) fqParts.push(`organization:${params.organization}`)
     if (params.tags)         fqParts.push(`tags:${params.tags}`)
     if (params.groups)       fqParts.push(`groups:${params.groups}`)
+    if (params.format)       fqParts.push(`res_format:${params.format.toUpperCase()}`)
     if (fqParts.length > 0)  query['fq'] = fqParts.join(' AND ')
 
     if (params.q)       query['q'] = params.q
     if (params.facet)   query['facet'] = 'true'
 
-    return ckanFetch<CKANPackageSearchResult>('package_search', query)
+    return ckanFetch<CKANPackageSearchResult>('package_search', query, 3600)
   },
 
   /** Get a single dataset by name or ID */
   async getDataset(id: string): Promise<CKANDataset> {
-    return ckanFetch<CKANDataset>('package_show', { id })
+    return ckanFetch<CKANDataset>('package_show', { id }, 3600)
   },
 
   /** Search datasets by query string */
@@ -125,7 +166,7 @@ export const ckanAPI = {
       all_fields:     true,
       include_extras: true,
       include_dataset_count: true,
-    })
+    }, 3600)
   },
 
   /** Get a single organization by name or ID */
@@ -133,30 +174,61 @@ export const ckanAPI = {
     return ckanFetch<CKANOrganization>('organization_show', {
       id,
       include_datasets: false,
-    })
+    }, 3600)
+  },
+
+  // Categories / groups
+  async getGroups(): Promise<CKANGroup[]> {
+    return ckanFetch<CKANGroup[]>('group_list', {
+      all_fields: true,
+      include_extras: true,
+      include_dataset_count: true,
+    }, 3600)
+  },
+
+  async getGroup(id: string): Promise<CKANGroup> {
+    return ckanFetch<CKANGroup>('group_show', {
+      id,
+      include_datasets: false,
+    }, 3600)
   },
 
   // ── Tags ──────────────────────────────────────────────────────────────────
 
   /** List all tags */
   async getTagList(): Promise<CKANTag[]> {
-    return ckanFetch<CKANTag[]>('tag_list', { all_fields: true })
+    return ckanFetch<CKANTag[]>('tag_list', { all_fields: true }, 3600)
   },
 
   // ── Site Stats ────────────────────────────────────────────────────────────
 
   /** Aggregate site-wide statistics */
   async getSiteStats(): Promise<CKANSiteStats> {
-    const [datasetsResult, orgs, tags] = await Promise.allSettled([
-      ckanFetch<CKANPackageSearchResult>('package_search', { rows: 0 }),
-      ckanFetch<string[]>('organization_list', {}),
-      ckanFetch<string[]>('tag_list', {}),
+    const [datasetsResult, orgs, groups, categoryFacets, downloads] = await Promise.allSettled([
+      ckanFetch<CKANPackageSearchResult>('package_search', { rows: 0 }, 300),
+      ckanFetch<string[]>('organization_list', {}, 3600),
+      ckanFetch<string[]>('group_list', {}, 3600),
+      ckanFetch<CKANPackageSearchResult>('package_search', {
+        rows: 0,
+        facet: true,
+        'facet.field': ['tags'],
+      }, 300),
+      getTotalResourceTracking(),
     ])
+
+    const groupCount = groups.status === 'fulfilled' ? groups.value.length : 0
+    const categoryCount =
+      categoryFacets.status === 'fulfilled'
+        ? PRIMARY_CATEGORY_TAGS.filter(
+            (tag) => (categoryFacets.value.facets?.tags?.[tag] ?? 0) > 0
+          ).length
+        : 0
 
     return {
       datasetCount:      datasetsResult.status === 'fulfilled' ? datasetsResult.value.count : 0,
       organizationCount: orgs.status  === 'fulfilled' ? orgs.value.length  : 7,
-      tagCount:          tags.status  === 'fulfilled' ? tags.value.length  : 0,
+      groupCount:        categoryCount || groupCount,
+      downloads:         downloads.status === 'fulfilled' ? downloads.value : 0,
     }
   },
 
@@ -167,6 +239,29 @@ export const ckanAPI = {
     resourceId: string,
     limit = 10
   ): Promise<{ records: Record<string, unknown>[]; fields: Array<{ id: string; type: string }> }> {
-    return ckanFetch('datastore_search', { resource_id: resourceId, limit })
+    return ckanFetch('datastore_search', { resource_id: resourceId, limit }, 3600)
+  },
+
+  async getDatasetListPage(params: DatasetListParams = {}): Promise<DatasetListResponse> {
+    const pageSize = Math.min(Math.max(params.rows ?? 12, 1), 24)
+    const start = Math.max(params.start ?? 0, 0)
+    const page = Math.floor(start / pageSize) + 1
+
+    const [result, organizations] = await Promise.all([
+      ckanAPI.getDatasets({ ...params, rows: pageSize, start }),
+      ckanAPI.getOrganizations(),
+    ])
+
+    return {
+      result,
+      organizations,
+      page,
+      pageSize,
+      totalPages: Math.max(1, Math.ceil(result.count / pageSize)),
+    }
+  },
+
+  async getDatasetNames(): Promise<string[]> {
+    return ckanFetch<string[]>('package_list', {}, 3600)
   },
 }

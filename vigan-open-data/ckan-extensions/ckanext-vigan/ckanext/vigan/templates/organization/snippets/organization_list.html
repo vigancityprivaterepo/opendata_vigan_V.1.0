@@ -1,0 +1,16 @@
+{#
+Display organization items as a plain CSS grid.
+
+CKAN's default organization list uses data-module="media-grid", which runs a
+masonry layout script. The Vigan theme uses normal CSS grid instead so cards
+stay aligned and centered.
+#}
+{% block organization_list %}
+<ul class="media-grid vigan-organization-grid">
+  {% block organization_list_inner %}
+  {% for organization in organizations %}
+    {% snippet "organization/snippets/organization_item.html", organization=organization, position=loop.index, show_capacity=show_capacity %}
+  {% endfor %}
+  {% endblock %}
+</ul>
+{% endblock %}

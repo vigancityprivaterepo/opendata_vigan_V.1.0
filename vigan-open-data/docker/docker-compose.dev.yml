@@ -1,19 +1,22 @@
 # docker-compose.dev.yml — Development overrides
 # Usage: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
-version: "3.8"
-
 services:
 
   ckan:
     restart: "no"
     environment:
       CKAN_DEBUG: "true"
-      CKAN_SITE_URL: http://localhost:5001
+      CKAN_SITE_URL: http://172.16.2.11:8080
       NEXT_PUBLIC_CKAN_URL: http://ckan:5000
     volumes:
       - ckan_storage:/var/lib/ckan
       # Live-mount the extension so edits apply without rebuilding
       - ../ckan-extensions:/srv/app/src_extensions
+      - ../scripts:/srv/app/scripts:ro
+      - ../sample-datasets:/tmp/sample-datasets:ro
+
+  ckan_tracking:
+    restart: "no"
 
   frontend:
     build:
@@ -21,6 +24,10 @@ services:
     restart: "no"
     environment:
       NEXT_PUBLIC_CKAN_URL: http://ckan:5000
+      NEXT_PUBLIC_SITE_URL: http://172.16.2.11:8080
+      CKAN_SITE_URL: http://172.16.2.11:8080
+      LOGIN_ACCESS_TOKEN_HASH: ${LOGIN_ACCESS_TOKEN_HASH:-}
+      LOGIN_ACCESS_TOKEN: ${LOGIN_ACCESS_TOKEN:-}
     command: npm run dev
     volumes:
       # Live-mount the Next.js source for hot-reload

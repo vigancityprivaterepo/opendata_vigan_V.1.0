@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
 
   # ─────────────────────────────────────────────────
@@ -14,37 +12,53 @@ services:
     restart: unless-stopped
     environment:
       # Database
-      CKAN_SQLALCHEMY_URL: postgresql://ckan:ckan@db/ckan
-      CKAN_DATASTORE_WRITE_URL: postgresql://ckan:ckan@db/datastore
-      CKAN_DATASTORE_READ_URL: postgresql://datastore_ro:datastore@db/datastore
+      CKAN_SQLALCHEMY_URL: postgresql://${CKAN_DB_USER}:${CKAN_DB_PASSWORD}@db/${CKAN_DB_NAME}
+      CKAN_DATASTORE_WRITE_URL: postgresql://${CKAN_DB_USER}:${CKAN_DB_PASSWORD}@db/datastore
+      CKAN_DATASTORE_READ_URL: postgresql://${CKAN_DATASTORE_READ_USER}:${CKAN_DATASTORE_READ_PASSWORD}@db/datastore
       # Search & Cache
       CKAN_SOLR_URL: http://solr:8983/solr/ckan
       CKAN_REDIS_URL: redis://redis:6379/1
       # Site configuration
-      CKAN_SITE_URL: http://localhost:5001
-      CKAN_SITE_TITLE: "Vigan City Open Data Portal"
-      CKAN_SITE_DESCRIPTION: "Official open data portal of the City Government of Vigan"
-      CKAN_SECRET_KEY: "dev-vigan-secret-key-change-me"
-      CKAN_BEAKER_SESSION_SECRET: "dev-vigan-beaker-secret-change-me"
-      CKAN_BEAKER_SESSION_VALIDATE_KEY: "dev-vigan-beaker-validate-change-me"
+      CKAN_SITE_URL: ${CKAN_SITE_URL}
+      CKAN_SITE_TITLE: ${CKAN_SITE_TITLE}
+      CKAN_SITE_DESCRIPTION: ${CKAN_SITE_DESCRIPTION}
+      CKAN_SECRET_KEY: ${CKAN_SECRET_KEY}
+      CKAN__XLOADER__SITE_URL: http://nginx
+      CKAN__DATAPUSHER__URL: http://datapusher:8800
+      CKAN__DATAPUSHER__CALLBACK_URL_BASE: http://ckan:5000
+      CKAN_BEAKER_SESSION_SECRET: ${CKAN_BEAKER_SESSION_SECRET}
+      CKAN_BEAKER_SESSION_VALIDATE_KEY: ${CKAN_BEAKER_SESSION_VALIDATE_KEY}
       # Auth settings
       CKAN__AUTH__PUBLIC_USER_DETAILS: "true"
       CKAN__AUTH__PUBLIC_ACTIVITY_STREAM_DETAIL: "true"
       CKAN__AUTH__ALLOW_DATASET_COLLABORATORS: "false"
       CKAN__AUTH__CREATE_UNOWNED_DATASET: "false"
+      CKAN__AUTH__CREATE_USER_VIA_WEB: ${CKAN_CREATE_USER_VIA_WEB:-false}
+      CKAN__AUTH__CREATE_USER_VIA_API: ${CKAN_CREATE_USER_VIA_API:-false}
+      CKAN__AUTH__USER_CREATE_GROUPS: "true"
+      CKAN__AUTH__USER_CREATE_ORGANIZATIONS: "true"
+      # Mail settings for CKAN user invites
+      CKAN___SMTP__SERVER: ${CKAN_SMTP_SERVER:-mailpit:1025}
+      CKAN___SMTP__STARTTLS: ${CKAN_SMTP_STARTTLS:-false}
+      CKAN___SMTP__USER: ${CKAN_SMTP_USER:-}
+      CKAN___SMTP__PASSWORD: ${CKAN_SMTP_PASSWORD:-}
+      CKAN___SMTP__MAIL_FROM: ${CKAN_SMTP_MAIL_FROM:-portal@vigan.gov.ph}
+      CKAN___ERROR_EMAIL_FROM: ${CKAN_ERROR_EMAIL_FROM:-portal@vigan.gov.ph}
+      CKAN___EMAIL_TO: ${CKAN_EMAIL_TO:-admin@vigan.gov.ph}
       # Sysadmin bootstrap
-      CKAN_SYSADMIN_NAME: vigancity_admin
-      CKAN_SYSADMIN_PASSWORD: "VCAdmin@2026!"
-      CKAN_SYSADMIN_EMAIL: admin@vigan.gov.ph
+      CKAN_SYSADMIN_NAME: ${CKAN_SYSADMIN_NAME}
+      CKAN_SYSADMIN_PASSWORD: ${CKAN_SYSADMIN_PASSWORD}
+      CKAN_SYSADMIN_EMAIL: ${CKAN_SYSADMIN_EMAIL}
       # Plugins — keep envvars first so env overrides work
-      CKAN__PLUGINS: "envvars image_view text_view recline_view datastore vigan"
-      # Datapusher
-      CKAN__DATAPUSHER__URL: http://datapusher:8800
-      CKAN__DATAPUSHER__CALLBACK_URL_BASE: http://ckan:5000
+      CKAN__PLUGINS: "envvars activity image_view text_view datatables_view datastore xloader scheming_datasets charts_view charts_builder_view vigan"
+      CKAN__VIEWS__DEFAULT_VIEWS: "image_view text_view datatables_view charts_view charts_builder_view"
+      CKANEXT__CHARTS__ALLOW_ANON_BUILDING_CHARTS: "true"
       UWSGI_OPTS: "--plugin python3 --http-socket 0.0.0.0:5000 --wsgi-file /srv/app/wsgi.py --callable application --master --enable-threads --lazy-apps -p 2 -L -b 32768 --vacuum --harakiri 60"
     volumes:
       - ckan_storage:/var/lib/ckan
       - ../ckan-extensions:/srv/app/src_extensions
+      - ../scripts:/srv/app/scripts:ro
+      - ../sample-datasets:/tmp/sample-datasets:ro
     depends_on:
       db:
         condition: service_healthy
@@ -52,30 +66,127 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+      mailpit:
+        condition: service_started
     ports:
-      - "5001:5000"
+      - "127.0.0.1:5001:5000"
     networks:
       - vigan_net
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/3/action/site_read"]
+      test: [ "CMD", "curl", "-f", "http://localhost:5000/api/3/action/site_read" ]
       interval: 30s
       timeout: 10s
       retries: 10
       start_period: 90s
 
+  ckan_tracking:
+    platform: linux/amd64
+    build:
+      context: ..
+      dockerfile: docker/ckan/Dockerfile
+    container_name: vigan_ckan_tracking
+    restart: unless-stopped
+    command: >-
+      /bin/sh -c "while true; do
+      ckan --config=/srv/app/ckan.ini tracking update;
+      sleep 60;
+      done"
+    healthcheck:
+      disable: true
+    environment:
+      CKAN_SQLALCHEMY_URL: postgresql://${CKAN_DB_USER}:${CKAN_DB_PASSWORD}@db/${CKAN_DB_NAME}
+      CKAN_DATASTORE_WRITE_URL: postgresql://${CKAN_DB_USER}:${CKAN_DB_PASSWORD}@db/datastore
+      CKAN_DATASTORE_READ_URL: postgresql://${CKAN_DATASTORE_READ_USER}:${CKAN_DATASTORE_READ_PASSWORD}@db/datastore
+      CKAN_SOLR_URL: http://solr:8983/solr/ckan
+      CKAN_REDIS_URL: redis://redis:6379/1
+      CKAN_SITE_URL: ${CKAN_SITE_URL}
+      CKAN_SITE_TITLE: ${CKAN_SITE_TITLE}
+      CKAN_SITE_DESCRIPTION: ${CKAN_SITE_DESCRIPTION}
+      CKAN_SECRET_KEY: ${CKAN_SECRET_KEY}
+      CKAN__XLOADER__SITE_URL: http://nginx
+      CKAN__DATAPUSHER__URL: http://datapusher:8800
+      CKAN__DATAPUSHER__CALLBACK_URL_BASE: http://ckan:5000
+      CKAN_BEAKER_SESSION_SECRET: ${CKAN_BEAKER_SESSION_SECRET}
+      CKAN_BEAKER_SESSION_VALIDATE_KEY: ${CKAN_BEAKER_SESSION_VALIDATE_KEY}
+      CKAN__PLUGINS: "envvars activity image_view text_view datatables_view datastore xloader scheming_datasets charts_view charts_builder_view vigan"
+      CKAN__VIEWS__DEFAULT_VIEWS: "image_view text_view datatables_view charts_view charts_builder_view"
+      CKANEXT__CHARTS__ALLOW_ANON_BUILDING_CHARTS: "true"
+      CKAN__AUTH__USER_CREATE_GROUPS: "true"
+      CKAN__AUTH__USER_CREATE_ORGANIZATIONS: "true"
+      CKAN___SMTP__SERVER: ${CKAN_SMTP_SERVER:-mailpit:1025}
+      CKAN___SMTP__STARTTLS: ${CKAN_SMTP_STARTTLS:-false}
+      CKAN___SMTP__USER: ${CKAN_SMTP_USER:-}
+      CKAN___SMTP__PASSWORD: ${CKAN_SMTP_PASSWORD:-}
+      CKAN___SMTP__MAIL_FROM: ${CKAN_SMTP_MAIL_FROM:-portal@vigan.gov.ph}
+      CKAN___ERROR_EMAIL_FROM: ${CKAN_ERROR_EMAIL_FROM:-portal@vigan.gov.ph}
+      CKAN___EMAIL_TO: ${CKAN_EMAIL_TO:-admin@vigan.gov.ph}
+    volumes:
+      - ckan_storage:/var/lib/ckan
+      - ../ckan-extensions:/srv/app/src_extensions
+    depends_on:
+      ckan:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      solr:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - vigan_net
+
   # ─────────────────────────────────────────────────
   # Datapusher — Automatic CSV → DataStore ingestion
   # ─────────────────────────────────────────────────
-  datapusher:
-    profiles:
-      - datapusher
+  xloader_worker:
     platform: linux/amd64
-    image: ckan/ckan-base:2.10
-    container_name: vigan_datapusher
+    build:
+      context: ..
+      dockerfile: docker/ckan/Dockerfile
+    container_name: vigan_xloader_worker
     restart: unless-stopped
-    command: /bin/sh -c "pip install datapusher ckanserviceprovider messytables && datapusher -p 8800"
-    ports:
-      - "8800:8800"
+    command: ckan --config=/srv/app/ckan.ini jobs worker
+    healthcheck:
+      disable: true
+    environment:
+      CKAN_SQLALCHEMY_URL: postgresql://${CKAN_DB_USER}:${CKAN_DB_PASSWORD}@db/${CKAN_DB_NAME}
+      CKAN_DATASTORE_WRITE_URL: postgresql://${CKAN_DB_USER}:${CKAN_DB_PASSWORD}@db/datastore
+      CKAN_DATASTORE_READ_URL: postgresql://${CKAN_DATASTORE_READ_USER}:${CKAN_DATASTORE_READ_PASSWORD}@db/datastore
+      CKAN_SOLR_URL: http://solr:8983/solr/ckan
+      CKAN_REDIS_URL: redis://redis:6379/1
+      CKAN_SITE_URL: ${CKAN_SITE_URL}
+      CKAN_SITE_TITLE: ${CKAN_SITE_TITLE}
+      CKAN_SITE_DESCRIPTION: ${CKAN_SITE_DESCRIPTION}
+      CKAN_SECRET_KEY: ${CKAN_SECRET_KEY}
+      CKAN__XLOADER__SITE_URL: http://nginx
+      CKAN__DATAPUSHER__URL: http://datapusher:8800
+      CKAN__DATAPUSHER__CALLBACK_URL_BASE: http://ckan:5000
+      CKAN_BEAKER_SESSION_SECRET: ${CKAN_BEAKER_SESSION_SECRET}
+      CKAN_BEAKER_SESSION_VALIDATE_KEY: ${CKAN_BEAKER_SESSION_VALIDATE_KEY}
+      CKAN__PLUGINS: "envvars activity image_view text_view datatables_view datastore xloader scheming_datasets charts_view charts_builder_view vigan"
+      CKAN__VIEWS__DEFAULT_VIEWS: "image_view text_view datatables_view charts_view charts_builder_view"
+      CKANEXT__CHARTS__ALLOW_ANON_BUILDING_CHARTS: "true"
+      CKAN__AUTH__USER_CREATE_GROUPS: "true"
+      CKAN__AUTH__USER_CREATE_ORGANIZATIONS: "true"
+      CKAN___SMTP__SERVER: ${CKAN_SMTP_SERVER:-mailpit:1025}
+      CKAN___SMTP__STARTTLS: ${CKAN_SMTP_STARTTLS:-false}
+      CKAN___SMTP__USER: ${CKAN_SMTP_USER:-}
+      CKAN___SMTP__PASSWORD: ${CKAN_SMTP_PASSWORD:-}
+      CKAN___SMTP__MAIL_FROM: ${CKAN_SMTP_MAIL_FROM:-portal@vigan.gov.ph}
+      CKAN___ERROR_EMAIL_FROM: ${CKAN_ERROR_EMAIL_FROM:-portal@vigan.gov.ph}
+      CKAN___EMAIL_TO: ${CKAN_EMAIL_TO:-admin@vigan.gov.ph}
+    volumes:
+      - ckan_storage:/var/lib/ckan
+      - ../ckan-extensions:/srv/app/src_extensions
+    depends_on:
+      ckan:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      solr:
+        condition: service_healthy
+      redis:
+        condition: service_started
     networks:
       - vigan_net
 
@@ -87,16 +198,18 @@ services:
     container_name: vigan_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ckan
-      POSTGRES_PASSWORD: ckan
-      POSTGRES_DB: ckan
+      POSTGRES_USER: ${CKAN_DB_USER}
+      POSTGRES_PASSWORD: ${CKAN_DB_PASSWORD}
+      POSTGRES_DB: ${CKAN_DB_NAME}
+      CKAN_DATASTORE_READ_USER: ${CKAN_DATASTORE_READ_USER}
+      CKAN_DATASTORE_READ_PASSWORD: ${CKAN_DATASTORE_READ_PASSWORD}
     volumes:
       - pg_data:/var/lib/postgresql/data
-      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./postgres/init.sh:/docker-entrypoint-initdb.d/init.sh:ro
     networks:
       - vigan_net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ckan -d ckan"]
+      test: [ "CMD-SHELL", "pg_isready -U ${CKAN_DB_USER} -d ${CKAN_DB_NAME}" ]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -115,7 +228,7 @@ services:
     networks:
       - vigan_net
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8983/solr/ckan/admin/ping"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8983/solr/ckan/admin/ping" ]
       interval: 15s
       timeout: 5s
       retries: 10
@@ -137,6 +250,15 @@ services:
   # ─────────────────────────────────────────────────
   # Nginx — Reverse proxy + TLS termination
   # ─────────────────────────────────────────────────
+  # Local SMTP catcher for CKAN user invite emails
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: vigan_mailpit
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8025:8025"
+    networks:
+      - vigan_net
   nginx:
     build:
       context: ./nginx
@@ -161,12 +283,20 @@ services:
     build:
       context: ../frontend
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_CKAN_URL: ${NEXT_PUBLIC_CKAN_URL:-http://nginx}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:8080}
     container_name: vigan_frontend
     restart: unless-stopped
     environment:
-      NEXT_PUBLIC_CKAN_URL: http://ckan:5000
+      NEXT_PUBLIC_CKAN_URL: ${NEXT_PUBLIC_CKAN_URL}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+      CKAN_INTERNAL_URL: http://ckan:5000
+      CKAN_SITE_URL: ${CKAN_SITE_URL}
+      LOGIN_ACCESS_TOKEN_HASH: ${LOGIN_ACCESS_TOKEN_HASH}
+      LOGIN_ACCESS_TOKEN: ${LOGIN_ACCESS_TOKEN:-}
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       - ckan
     networks:
@@ -191,3 +321,6 @@ volumes:
 networks:
   vigan_net:
     driver: bridge
+
+
+

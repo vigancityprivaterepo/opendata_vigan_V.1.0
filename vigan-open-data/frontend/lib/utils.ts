@@ -3,6 +3,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { clsx, type ClassValue } from 'clsx'
+import type { CKANResource } from '@/types/ckan'
 
 /** Merge Tailwind classes safely */
 export function cn(...inputs: ClassValue[]) {
@@ -42,16 +43,21 @@ export function formatFileSize(bytes: number | null | undefined): string {
   return `${size.toFixed(1)} ${units[unitIndex]}`
 }
 
-/** Map a CKAN resource format string to a CSS color class */
+/** Map a CKAN resource format string to a Tailwind CSS color class */
 export function getFormatColor(format: string | null | undefined): string {
   const f = (format || '').toUpperCase()
-  if (f === 'CSV')     return 'bg-green-100 text-green-800'
-  if (f === 'GEOJSON') return 'bg-blue-100 text-blue-800'
-  if (f === 'JSON')    return 'bg-yellow-100 text-yellow-800'
-  if (f === 'PDF')     return 'bg-red-100 text-red-800'
-  if (f === 'XLSX' || f === 'XLS') return 'bg-emerald-100 text-emerald-800'
-  if (f === 'SHP')     return 'bg-purple-100 text-purple-800'
-  return 'bg-gray-100 text-gray-700'
+  if (f === 'HTML')   return 'bg-sky-700 text-sky-50'
+  if (f === 'JSON')   return 'bg-orange-600 text-orange-50'
+  if (f === 'XML')    return 'bg-amber-700 text-amber-50'
+  if (f === 'TEXT' || f === 'TXT') return 'bg-slate-600 text-slate-50'
+  if (f === 'CSV')    return 'bg-emerald-700 text-emerald-50'
+  if (f === 'XLSX' || f === 'XLS') return 'bg-green-700 text-green-50'
+  if (f === 'ZIP')    return 'bg-zinc-600 text-zinc-50'
+  if (f === 'API')    return 'bg-fuchsia-700 text-fuchsia-50'
+  if (f === 'PDF')    return 'bg-rose-700 text-rose-50'
+  if (f === 'RDF' || f === 'NQUAD' || f === 'NTRIPLES' || f === 'TURTLE') return 'bg-indigo-700 text-indigo-50'
+  if (f === 'GEOJSON' || f === 'SHP') return 'bg-teal-700 text-teal-50'
+  return 'bg-gray-600 text-gray-50'
 }
 
 /** Get an icon character for a format */
@@ -80,16 +86,69 @@ export const DEPARTMENTS: Record<string, {
 
 /** Build a CKAN resource download URL */
 export function getResourceDownloadURL(resourceUrl: string): string {
-  // Resource URLs may be relative CKAN paths
-  if (resourceUrl.startsWith('http')) return resourceUrl
-  const base = process.env.NEXT_PUBLIC_CKAN_URL || 'http://localhost:5000'
-  return `${base}${resourceUrl}`
+  if (!resourceUrl) return '#'
+
+  if (!resourceUrl.startsWith('http')) {
+    return resourceUrl.startsWith('/') ? resourceUrl : `/${resourceUrl}`
+  }
+
+  try {
+    const parsed = new URL(resourceUrl)
+    const isInternalCKAN =
+      parsed.hostname === 'ckan' ||
+      (parsed.hostname === 'localhost' && (parsed.port === '5000' || parsed.port === '8080'))
+
+    if (isInternalCKAN) {
+      return `${parsed.pathname}${parsed.search}`
+    }
+  } catch {
+    return resourceUrl
+  }
+
+  return resourceUrl
+}
+
+export function getTrackedResourceDownloadURL(resourceId: string, resourceUrl: string): string {
+  const directUrl = getResourceDownloadURL(resourceUrl)
+  const params = new URLSearchParams({ url: directUrl })
+  return `/api/download/${resourceId}?${params.toString()}`
+}
+
+/** Build the CKAN resource page URL where native views like PDF / GeoJSON live */
+export function getCKANResourcePageURL(datasetName: string, resourceId: string): string {
+  return `/datasets/${datasetName}/resources/${resourceId}`
+}
+
+export function getUniqueResourceFormats(resources: CKANResource[] | null | undefined): string[] {
+  if (!resources?.length) return []
+  return Array.from(
+    new Set(
+      resources
+        .map((resource) => (resource.format || '').toUpperCase().trim())
+        .filter(Boolean)
+    )
+  ).slice(0, 4)
 }
 
 /** Resolve CKAN-hosted image URLs for server and browser rendering */
 export function getCKANImageURL(imageUrl: string | null | undefined): string {
   if (!imageUrl) return ''
-  if (imageUrl.startsWith('http')) return imageUrl
-  const base = process.env.NEXT_PUBLIC_CKAN_URL || 'http://localhost:5000'
-  return `${base}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`
+  if (!imageUrl.startsWith('http')) {
+    return imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`
+  }
+
+  try {
+    const parsed = new URL(imageUrl)
+    const isInternalCKAN =
+      parsed.hostname === 'ckan' ||
+      (parsed.hostname === 'localhost' && (parsed.port === '5000' || parsed.port === '8080'))
+
+    if (isInternalCKAN) {
+      return `${parsed.pathname}${parsed.search}`
+    }
+  } catch {
+    return imageUrl
+  }
+
+  return imageUrl
 }

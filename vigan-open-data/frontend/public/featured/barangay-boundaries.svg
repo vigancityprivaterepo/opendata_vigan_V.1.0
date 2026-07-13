@@ -1,0 +1,17 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" fill="#EEF8F3"/>
+  <rect y="468" width="1200" height="252" fill="#DDF0E8"/>
+  <path d="M78 156C168 107 238 105 300 141C378 185 430 205 510 190C591 176 658 101 769 115C884 130 954 220 1054 236C1094 243 1138 241 1200 215V0H0V115C18 142 41 156 78 156Z" fill="#C7E8DB"/>
+  <path d="M107 530L260 424L399 470L549 353L760 417L940 282L1117 365V720H107V530Z" fill="#A8D8C5"/>
+  <path d="M147 537L320 452L428 501L598 406L733 447L904 350L1084 414" stroke="#2E7D68" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M255 206L296 243L340 197L393 240L455 181L519 224L603 160L681 214L766 147L844 194L923 135" stroke="#0D7A5F" stroke-width="12" stroke-linecap="round" stroke-dasharray="1 26"/>
+  <path d="M202 205L276 298L386 258L458 322L579 272L656 341L785 276L876 340L982 283" stroke="#F4D35E" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="202" cy="205" r="19" fill="#F59E0B"/>
+  <circle cx="386" cy="258" r="19" fill="#F59E0B"/>
+  <circle cx="579" cy="272" r="19" fill="#F59E0B"/>
+  <circle cx="785" cy="276" r="19" fill="#F59E0B"/>
+  <circle cx="982" cy="283" r="19" fill="#F59E0B"/>
+  <rect x="110" y="86" width="264" height="92" rx="24" fill="white" fill-opacity="0.72"/>
+  <text x="144" y="126" fill="#0F513E" font-family="Arial, sans-serif" font-size="34" font-weight="700">Barangay Boundaries</text>
+  <text x="144" y="157" fill="#4B6B60" font-family="Arial, sans-serif" font-size="22">Administrative map preview</text>
+</svg>

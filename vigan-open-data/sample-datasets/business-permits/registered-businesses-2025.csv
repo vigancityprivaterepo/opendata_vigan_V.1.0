@@ -1,0 +1,9 @@
+business_id,business_name,trade_name,barangay,business_type,sector,permit_status,issue_date,expiry_date,employees
+BP-2025-0001,Vigan Heritage Cafe Inc.,Heritage Cafe,Cabaroan Daya,Corporation,Food and Beverage,Active,2025-01-08,2025-12-31,18
+BP-2025-0002,Ilocos Loom Works,Abel Vigan Crafts,Pantay Fatima,Sole Proprietorship,Retail,Active,2025-01-12,2025-12-31,6
+BP-2025-0003,Plaza Stay Suites,Plaza Stay,VIII,Partnership,Accommodation,Active,2025-01-15,2025-12-31,24
+BP-2025-0004,Calle Crisologo Tours,Crisologo Tours,IX,Corporation,Tourism Services,Active,2025-01-18,2025-12-31,11
+BP-2025-0005,Vigan Fresh Market Cooperative,VFM Coop,I,Cooperative,Wholesale and Retail,Active,2025-02-03,2025-12-31,14
+BP-2025-0006,North Gate Pharmacy,North Gate Pharmacy,III,Sole Proprietorship,Health and Wellness,Active,2025-02-10,2025-12-31,5
+BP-2025-0007,Pagburnayan Pottery Studio,Pagburnayan Studio,Paoa,Partnership,Arts and Culture,Active,2025-02-14,2025-12-31,9
+BP-2025-0008,Riverfront Agro Supply,Riverfront Agro Supply,San Julian Norte,Sole Proprietorship,Agriculture Supply,Active,2025-02-21,2025-12-31,7

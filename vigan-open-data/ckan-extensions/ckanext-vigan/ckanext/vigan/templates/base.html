@@ -1,54 +1,231 @@
 {% ckan_extends %}
 
-{# ── Override the page title block ─────────────────────────────────────────── #}
+{% set current_path = request.path if request and request.path else '' %}
+
 {% block title %}
   {% if self.subtitle() %}
-    {{ self.subtitle() }} - {{ h.vigan_site_title() }}
+    {{ self.subtitle() }} - data.vigancity.gov.ph
   {% else %}
-    {{ h.vigan_site_title() }} | Official Open Data Portal
+    data.vigancity.gov.ph | Open Data Portal
   {% endif %}
 {% endblock %}
 
-{# ── Inject Google Fonts + meta in <head> ─────────────────────────────────── #}
 {% block meta %}
   {{ super() }}
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description"
-        content="Official open data portal of the City Government of Vigan, Ilocos Sur, Philippines — a UNESCO World Heritage City.">
-  <meta name="keywords"
-        content="Vigan, open data, Ilocos Sur, Philippines, government data, datasets">
-  <meta name="author" content="City Government of Vigan — ICT Office">
-  <meta name="robots" content="index, follow">
-
-  {# Open Graph #}
-  <meta property="og:type"        content="website">
-  <meta property="og:site_name"   content="Vigan City Open Data Portal">
-  <meta property="og:title"       content="{{ self.title() }}">
-  <meta property="og:description" content="Discover and download open data from Vigan City government.">
-  <meta property="og:image"       content="/images/vigan-og-image.png">
-  <meta property="og:url"         content="{{ h.url_for('/', qualified=True) }}">
-
-  {# Twitter Card #}
-  <meta name="twitter:card"        content="summary_large_image">
-  <meta name="twitter:title"       content="{{ self.title() }}">
-  <meta name="twitter:description" content="Vigan City Open Data Portal — UNESCO World Heritage City">
-  <meta name="twitter:image"       content="/images/vigan-og-image.png">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta
+    name="description"
+    content="Official open data portal of the City Government of Vigan, Ilocos Sur, Philippines."
+  >
 {% endblock %}
 
-{# ── Head end: Google Fonts + custom CSS ──────────────────────────────────── #}
-{% block head_end %}
+{% block styles %}
   {{ super() }}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-  <link rel="stylesheet" href="/css/vigan.css">
-  <link rel="icon" type="image/svg+xml" href="/images/vigan-logo.svg">
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+  >
+  <link rel="stylesheet" href="/css/layout.css?v=resource-actions-bottom-1">
+  <link rel="stylesheet" href="/css/vigan.css?v=map-tools-3">
+  <link rel="icon" href="/images/favicon.ico">
+  <style>
+    .gov-banner { background:#0D4A2F;color:#fff;padding:6px 0;font:600 12px/1.4 'Inter',sans-serif; }
+    .gov-banner__inner { padding-left:48px;padding-right:48px; }
+    .site-header { background:#fff;border-bottom:2px solid #0D4A2F; }
+    .site-header__inner { display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px 48px; }
+    @media (max-width:991px) {
+      .gov-banner__inner { padding-left:24px;padding-right:24px; }
+      .site-header__inner { padding-left:24px;padding-right:24px; }
+    }
+    @media (max-width:768px) {
+      .gov-banner__inner { padding-left:20px;padding-right:20px; }
+      .site-header__inner { padding-left:20px;padding-right:20px; }
+    }
+  </style>
 {% endblock %}
 
-{# ── Body end: custom JS ──────────────────────────────────────────────────── #}
+
+
 {% block scripts %}
   {{ super() }}
-  <script src="/js/vigan.js" defer></script>
+  <style id="vigan-late-overrides">
+    body[data-vigan-page] .wrapper,
+    body[data-vigan-page] .row.wrapper {
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      overflow: visible !important;
+    }
+
+    body[data-vigan-page] .wrapper::before,
+    body[data-vigan-page] .wrapper::after,
+    body[data-vigan-page] .row.wrapper::before,
+    body[data-vigan-page] .row.wrapper::after {
+      display: none !important;
+      content: none !important;
+      border: 0 !important;
+      width: 0 !important;
+    }
+
+    body[data-vigan-page] .primary,
+    body[data-vigan-page] .secondary {
+      float: none !important;
+      min-width: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+    }
+
+    body[data-vigan-page="dataset-search"] .search-form {
+      overflow: hidden !important;
+    }
+
+    body[data-vigan-page="dataset-search"] .search-form .search-input,
+    body[data-vigan-page="dataset-search"] .search-form .search-giant,
+    body[data-vigan-page="dataset-search"] .search-form .search-giant input {
+      min-width: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    body[data-vigan-page="dataset-search"] .dataset-list,
+    body[data-vigan-page="dataset-search"] .dataset-item {
+      min-width: 0 !important;
+      max-width: 100% !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    body[data-vigan-page="organization-index"] .row.wrapper {
+      display: block !important;
+    }
+
+    body[data-vigan-page="organization-index"] .secondary {
+      display: none !important;
+    }
+
+    body[data-vigan-page="organization-index"] .primary {
+      width: 100% !important;
+      max-width: 100% !important;
+      padding: 0 !important;
+    }
+
+    body[data-vigan-page="organization-index"] .vigan-organization-intro {
+      margin-bottom: 18px !important;
+    }
+
+    body[data-vigan-page="organization-index"] .vigan-organization-intro .module {
+      margin: 0 !important;
+      overflow: hidden !important;
+    }
+
+    body[data-vigan-page="organization-index"] .vigan-organization-intro .module-heading {
+      border-radius: 18px 18px 0 0 !important;
+    }
+
+    body[data-vigan-page="organization-index"] .vigan-organization-intro .module-content {
+      padding: 20px 24px !important;
+    }
+    body[data-vigan-page="organization-index"] .media-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+      gap: 14px !important;
+      align-items: start !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      list-style: none !important;
+    }
+
+    body[data-vigan-page="organization-index"] .media-grid::before,
+    body[data-vigan-page="organization-index"] .media-grid::after,
+    body[data-vigan-page="organization-index"] .media-grid .clearfix {
+      display: none !important;
+      content: none !important;
+    }
+
+    body[data-vigan-page="organization-index"] .media-grid > .media-item {
+      display: flex !important;
+      flex-direction: column !important;
+      width: auto !important;
+      max-width: none !important;
+      min-height: 0 !important;
+      height: auto !important;
+      float: none !important;
+      clear: none !important;
+      margin: 0 !important;
+      padding: 14px !important;
+    }
+
+    body[data-vigan-page="organization-index"] .media-grid .media-image {
+      width: 100% !important;
+      height: 72px !important;
+      margin: 0 0 10px !important;
+      object-fit: cover !important;
+    }
+
+    body[data-vigan-page="organization-index"] .media-grid .media-heading {
+      min-height: 0 !important;
+      margin: 0 0 8px !important;
+      font-size: 18px !important;
+      line-height: 1.25 !important;
+    }
+
+    body[data-vigan-page="organization-index"] .media-grid .media-description {
+      display: -webkit-box !important;
+      min-height: 0 !important;
+      margin: 0 0 12px !important;
+      overflow: hidden !important;
+      -webkit-box-orient: vertical !important;
+      -webkit-line-clamp: 2 !important;
+    }
+
+    body[data-vigan-page="organization-index"] .media-grid .count {
+      margin-top: auto !important;
+    }
+
+    @media (max-width: 991px) {
+      body[data-vigan-page] .row.wrapper {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 18px !important;
+        flex-wrap: nowrap !important;
+      }
+
+      body[data-vigan-page] .primary,
+      body[data-vigan-page] .secondary {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+      }
+
+      body[data-vigan-page="dataset-search"] .search-form .search-giant {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        gap: 8px !important;
+      }
+
+      body[data-vigan-page="dataset-search"] .search-form .control-order-by {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        flex-wrap: wrap !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body[data-vigan-page] .module-content,
+      body[data-vigan-page] .dataset-item,
+      body[data-vigan-page] .resource-item,
+      body[data-vigan-page] .media-item,
+      body[data-vigan-page] .search-form {
+        padding: 14px !important;
+      }
+
+      body[data-vigan-page="dataset-search"] .search-form .search-giant {
+        grid-template-columns: minmax(0, 1fr) 52px !important;
+      }
+    }
+  </style>  <script src="/js/vigan.js?v=map-tools-3" defer></script>
 {% endblock %}
+

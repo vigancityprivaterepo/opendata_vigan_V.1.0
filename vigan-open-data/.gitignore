@@ -1,0 +1,6 @@
+.env
+.env.*
+!.env.example
+docker/.env
+frontend/.env.local
+frontend/.env.production

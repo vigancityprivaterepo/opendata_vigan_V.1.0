@@ -1,0 +1,150 @@
+{
+  "type": "FeatureCollection",
+  "name": "vigan_barangay_boundaries_sample",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "barangay_code": "BGY-I",
+        "barangay_name": "Barangay I",
+        "district": "Poblacion",
+        "land_area_ha": 18.4
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [120.3848, 17.5728],
+            [120.3854, 17.5732],
+            [120.3860, 17.5730],
+            [120.3862, 17.5736],
+            [120.3856, 17.5742],
+            [120.3849, 17.5740],
+            [120.3846, 17.5734],
+            [120.3848, 17.5728]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "barangay_code": "BGY-VIII",
+        "barangay_name": "Barangay VIII",
+        "district": "Poblacion",
+        "land_area_ha": 22.1
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [120.3860, 17.5730],
+            [120.3868, 17.5729],
+            [120.3874, 17.5734],
+            [120.3872, 17.5740],
+            [120.3865, 17.5743],
+            [120.3859, 17.5738],
+            [120.3860, 17.5730]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "barangay_code": "BGY-PAOA",
+        "barangay_name": "Paoa",
+        "district": "Rural",
+        "land_area_ha": 64.7
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [120.3834, 17.5715],
+            [120.3843, 17.5712],
+            [120.3853, 17.5714],
+            [120.3858, 17.5720],
+            [120.3854, 17.5727],
+            [120.3846, 17.5729],
+            [120.3837, 17.5725],
+            [120.3832, 17.5719],
+            [120.3834, 17.5715]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "barangay_code": "BGY-TAMAG",
+        "barangay_name": "Tamag",
+        "district": "Rural",
+        "land_area_ha": 41.3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [120.3852, 17.5712],
+            [120.3862, 17.5710],
+            [120.3871, 17.5712],
+            [120.3876, 17.5718],
+            [120.3870, 17.5725],
+            [120.3860, 17.5726],
+            [120.3853, 17.5721],
+            [120.3852, 17.5712]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "barangay_code": "BGY-SJN",
+        "barangay_name": "San Julian Norte",
+        "district": "Rural",
+        "land_area_ha": 33.9
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [120.3846, 17.5740],
+            [120.3855, 17.5742],
+            [120.3860, 17.5748],
+            [120.3857, 17.5755],
+            [120.3848, 17.5758],
+            [120.3840, 17.5753],
+            [120.3839, 17.5745],
+            [120.3846, 17.5740]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "barangay_code": "BGY-PF",
+        "barangay_name": "Pantay Fatima",
+        "district": "Rural",
+        "land_area_ha": 29.6
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [120.3860, 17.5740],
+            [120.3868, 17.5741],
+            [120.3876, 17.5746],
+            [120.3874, 17.5754],
+            [120.3866, 17.5758],
+            [120.3858, 17.5753],
+            [120.3857, 17.5745],
+            [120.3860, 17.5740]
+          ]
+        ]
+      }
+    }
+  ]
+}

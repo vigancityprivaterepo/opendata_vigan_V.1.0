@@ -160,7 +160,7 @@ Override CKAN footer with:
 - City Government of Vigan branding
 - Links: Privacy Policy | Terms of Use | Contact | Feedback
 - Powered by CKAN badge
-- Copyright: © 2026 City Government of Vigan. All rights reserved.
+- Copyright: © 2026 City Government of Vigan. All rights reserved. By City Management Information System
 - Philippine government disclaimer
 
 ### templates/home/index.html

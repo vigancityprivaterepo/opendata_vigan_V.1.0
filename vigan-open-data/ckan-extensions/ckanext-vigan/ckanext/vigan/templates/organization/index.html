@@ -1,0 +1,22 @@
+{% ckan_extends %}
+
+{% block bodytag %}{{ super() }} data-vigan-page="organization-index"{% endblock %}
+
+{% block page_primary_action %}
+  {% if c.userobj and h.check_access('organization_create') %}
+    {% set add_organization_label = h.humanize_entity_type('organization', group_type, 'add link') or _('Add Organization') %}
+    <a class="btn btn-primary" href="{{ h.url_for(group_type ~ '.new') }}">
+      <i class="fa fa-plus-square"></i>
+      {{ add_organization_label }}
+    </a>
+  {% endif %}
+{% endblock %}
+
+{% block primary_content_inner %}
+  <div class="vigan-organization-intro">
+    {% snippet "organization/snippets/helper.html", group_type=group_type %}
+  </div>
+  {{ super() }}
+{% endblock %}
+
+{% block secondary_content %}{% endblock %}

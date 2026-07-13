@@ -1,0 +1,7 @@
+facility_id,facility_name,barangay,facility_type,address,contact_number,services_offered,operating_hours
+CHO-001,Vigan City Health Office,VIII,Main Health Office,Quezon Avenue Vigan City,(077) 722-2623,"Outpatient care; immunization; maternal health",08:00-17:00
+BHC-001,Barangay I Health Center,I,Barangay Health Center,Rizal Street Barangay I,(077) 700-1001,"Consultation; blood pressure monitoring; prenatal checkups",08:00-16:00
+BHC-002,Barangay Pantay Fatima Health Center,Pantay Fatima,Barangay Health Center,Pantay Fatima Vigan City,(077) 700-1002,"Consultation; child immunization; nutrition services",08:00-16:00
+BHC-003,Barangay Cabaroan Daya Health Center,Cabaroan Daya,Barangay Health Center,Cabaroan Daya Vigan City,(077) 700-1003,"Consultation; maternal care; health education",08:00-16:00
+BHC-004,Barangay Paoa Health Center,Paoa,Barangay Health Center,Paoa Vigan City,(077) 700-1004,"Consultation; first aid; senior checkups",08:00-16:00
+BHC-005,Barangay San Julian Norte Health Center,San Julian Norte,Barangay Health Center,San Julian Norte Vigan City,(077) 700-1005,"Consultation; vaccination; family planning",08:00-16:00

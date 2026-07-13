@@ -3,6 +3,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { X, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
+import type { CKANOrganization } from '@/types/ckan'
 
 const FORMATS = ['CSV', 'GeoJSON', 'XLSX', 'PDF', 'JSON', 'SHP']
 const CATEGORIES = [
@@ -19,15 +20,6 @@ const SORT_OPTIONS = [
   { label: 'Most Relevant',  value: 'score desc' },
   { label: 'Title A → Z',    value: 'title_string asc' },
   { label: 'Title Z → A',    value: 'title_string desc' },
-]
-const DEPARTMENTS = [
-  { label: 'City Planning & Dev.',  value: 'city-planning' },
-  { label: 'Tourism Office',        value: 'tourism-office' },
-  { label: 'DRRMO',                 value: 'drrmo' },
-  { label: 'City Health Office',    value: 'city-health' },
-  { label: 'Business Permits',      value: 'business-permits' },
-  { label: 'City Budget',           value: 'city-budget' },
-  { label: 'CENRO',                 value: 'cenro' },
 ]
 
 // Format pill colors
@@ -66,7 +58,11 @@ function FilterSection({
   )
 }
 
-export default function DatasetFilters() {
+interface DatasetFiltersProps {
+  organizations: CKANOrganization[]
+}
+
+export default function DatasetFilters({ organizations }: DatasetFiltersProps) {
   const router      = useRouter()
   const params      = useSearchParams()
   const currentOrg  = params.get('organization') || ''
@@ -86,6 +82,10 @@ export default function DatasetFilters() {
 
   const hasFilters = !!(currentOrg || currentTag || currentFmt)
   const filterCount = [currentOrg, currentTag, currentFmt].filter(Boolean).length
+  const departmentOptions = organizations
+    .slice()
+    .sort((a, b) => a.title.localeCompare(b.title))
+    .map((org) => ({ label: org.title, value: org.name }))
 
   return (
     <aside className="space-y-5" aria-label="Dataset filters">
@@ -123,7 +123,7 @@ export default function DatasetFilters() {
       {/* Department */}
       <FilterSection title="Department">
         <div className="space-y-1.5">
-          {[{ label: 'All Departments', value: '' }, ...DEPARTMENTS].map((dept) => (
+          {[{ label: 'All Departments', value: '' }, ...departmentOptions].map((dept) => (
             <label
               key={dept.value}
               className={cn(

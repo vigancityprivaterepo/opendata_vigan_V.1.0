@@ -1,28 +1,17 @@
 import Link from 'next/link'
-import { FileText, Building2, Clock, ExternalLink } from 'lucide-react'
+import { FileText, Building2, Clock, ExternalLink, ArrowRight } from 'lucide-react'
 import type { CKANDataset } from '@/types/ckan'
-import { truncate, formatDate } from '@/lib/utils'
-import { cn } from '@/lib/utils'
+import { truncate, formatDate, getFormatColor, cn } from '@/lib/utils'
 
 interface Props {
   dataset: CKANDataset
   view?: 'grid' | 'list'
+  featured?: boolean
 }
 
 // Format → color mapping
-const FORMAT_COLORS: Record<string, { bg: string; text: string }> = {
-  CSV:     { bg: 'bg-green-100',  text: 'text-green-700'  },
-  XLSX:    { bg: 'bg-emerald-100',text: 'text-emerald-700'},
-  JSON:    { bg: 'bg-yellow-100', text: 'text-yellow-700' },
-  GEOJSON: { bg: 'bg-teal-100',   text: 'text-teal-700'   },
-  PDF:     { bg: 'bg-red-100',    text: 'text-red-700'    },
-  SHP:     { bg: 'bg-purple-100', text: 'text-purple-700' },
-  DEFAULT: { bg: 'bg-gray-100',   text: 'text-gray-600'   },
-}
-
 function getFormatStyle(fmt: string | null) {
-  if (!fmt) return FORMAT_COLORS.DEFAULT
-  return FORMAT_COLORS[fmt.toUpperCase()] ?? FORMAT_COLORS.DEFAULT
+  return getFormatColor(fmt)
 }
 
 // ─── LIST VIEW ──────────────────────────────────────────────────────────────
@@ -48,7 +37,7 @@ function DatasetListItem({ dataset }: { dataset: CKANDataset }) {
           </h3>
           <div className="flex items-center gap-1.5 flex-shrink-0">
             {format && (
-              <span className={cn('format-badge', fmtStyle.bg, fmtStyle.text)}>
+              <span className={cn('format-badge', fmtStyle)}>
                 {format}
               </span>
             )}
@@ -88,9 +77,13 @@ function DatasetListItem({ dataset }: { dataset: CKANDataset }) {
           </div>
           <Link
             href={`/datasets/${dataset.name}`}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-vigan-primary hover:text-vigan-accent transition-colors"
+            className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-wide uppercase
+                       bg-vigan-primary text-white
+                       px-3 py-1 rounded-full
+                       hover:bg-vigan-accent
+                       active:scale-95 transition-all duration-150 shadow-sm"
           >
-            View <ExternalLink size={11} />
+            View <ExternalLink size={10} />
           </Link>
         </div>
       </div>
@@ -115,7 +108,7 @@ function DatasetGridItem({ dataset }: { dataset: CKANDataset }) {
           {dataset.organization?.title || 'Vigan City Government'}
         </p>
         {format && (
-          <span className={cn('format-badge flex-shrink-0', fmtStyle.bg, fmtStyle.text)}>
+          <span className={cn('format-badge flex-shrink-0', fmtStyle)}>
             {format}
           </span>
         )}
@@ -152,9 +145,13 @@ function DatasetGridItem({ dataset }: { dataset: CKANDataset }) {
         </span>
         <Link
           href={`/datasets/${dataset.name}`}
-          className="text-xs font-semibold text-vigan-primary hover:text-vigan-accent transition-colors inline-flex items-center gap-1"
+          className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-wide uppercase
+                     bg-vigan-primary text-white
+                     px-3 py-1 rounded-full
+                     hover:bg-vigan-accent
+                     active:scale-95 transition-all duration-150 shadow-sm"
         >
-          View Dataset →
+          View Dataset <ArrowRight size={11} />
         </Link>
       </div>
     </article>

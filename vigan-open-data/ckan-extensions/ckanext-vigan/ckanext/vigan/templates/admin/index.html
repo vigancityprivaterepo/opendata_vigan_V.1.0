@@ -1,0 +1,159 @@
+{% extends "admin/base.html" %}
+
+{% set portal_users = h.get_action('user_list')({
+  'all_fields': True,
+  'order_by': 'created'
+}) %}
+{% set sysadmin_names = sysadmins|list %}
+
+{% block primary_content_inner %}
+  <h2>{{ _('Current Sysadmins') }}</h2>
+
+  <table class="table table-header table-hover table-bordered">
+    <thead>
+      <tr>
+        <th>{{ _('User') }}</th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in sysadmins %}
+        <tr>
+          <td>{{ h.linked_user(user) }}</td>
+          <td>
+            <div class="btn-group pull-right">
+              <form method="POST" action="{% url_for 'user.sysadmin' %}">
+                {{ h.csrf_input() }}
+                <input type="hidden" value="{{ user }}" name="username" />
+                <input type="hidden" value="0" name="status" />
+                <button
+                  type="submit"
+                  class="btn btn-danger btn-sm"
+                  title="{{ _('Revoke Sysadmin permission') }}"
+                >
+                  <i class="fa fa-times"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <hr />
+
+  <h2>{{ _('Promote user to Sysadmin') }}</h2>
+
+  <form method="POST" action="{% url_for 'user.sysadmin' %}">
+    {{ h.csrf_input() }}
+    <div class="row">
+      <div class="col">
+
+        <div class="form-group">
+          <input
+            id="promote-username" type="text" name="username" placeholder="Username"
+            value="" class="control-medium" data-module="autocomplete"
+            data-module-source="/api/2/util/user/autocomplete?ignore_self=true&q=?"
+          >
+          <input type="hidden" value="1" name="status" />
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            title="{{ _('Promote user to Sysadmin') }}"
+          >{{ _('Promote') }}</button>
+        </div>
+
+      </div>
+    </div>
+  </form>
+
+  <hr />
+
+  <section class="vigan-admin-users" aria-labelledby="vigan-admin-users-heading">
+    <div class="vigan-admin-users__header">
+      <div>
+        <h2 id="vigan-admin-users-heading">{{ _('All Users') }}</h2>
+        <p class="vigan-admin-users__summary">
+          {{ portal_users|length }} {{ _('user accounts created') }}
+        </p>
+      </div>
+      <a class="btn btn-default" href="{{ h.url_for('user.index') }}">
+        <i class="fa fa-users"></i>
+        {{ _('Open user directory') }}
+      </a>
+    </div>
+
+    <div class="vigan-admin-users__table-wrap">
+      <table class="table table-header table-hover table-bordered vigan-admin-users__table">
+        <thead>
+          <tr>
+            <th>{{ _('User') }}</th>
+            <th>{{ _('Email') }}</th>
+            <th>{{ _('Created') }}</th>
+            <th>{{ _('Role') }}</th>
+            <th>{{ _('Datasets') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in portal_users|sort(attribute='created', reverse=true) %}
+            <tr>
+              <td>
+                <strong>{{ h.linked_user(user.name, maxlength=40) }}</strong>
+                {% if user.fullname %}
+                  <div class="vigan-admin-users__muted">{{ user.fullname }}</div>
+                {% endif %}
+              </td>
+              <td>
+                {% if user.email %}
+                  <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+                {% else %}
+                  <span class="vigan-admin-users__muted">{{ _('No email') }}</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if user.created %}
+                  {{ h.render_datetime(user.created, with_hours=True) }}
+                {% else %}
+                  <span class="vigan-admin-users__muted">{{ _('Unknown') }}</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if user.sysadmin or user.name in sysadmin_names %}
+                  <span class="label label-success">{{ _('Sysadmin') }}</span>
+                {% else %}
+                  <span class="label label-default">{{ _('User') }}</span>
+                {% endif %}
+              </td>
+              <td>{{ user.number_created_packages or 0 }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="5">{{ _('No user accounts found.') }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}
+
+{% block secondary_content %}
+  <div class="module module-narrow module-shallow">
+    <h2 class="module-heading">
+      <i class="fa fa-info-circle"></i>
+      {{ _('Administer CKAN') }}
+    </h2>
+    <div class="module-content">
+
+      {% set docs_url = "https://docs.ckan.org/en/{0}/sysadmin-guide.html".format(g.ckan_doc_version) %}
+      {% trans %}
+        <p>As a sysadmin user you have full control over this CKAN instance. Proceed with care!</p>
+        <p>For guidance on using sysadmin features, see the CKAN  <a href="{{ docs_url }}" target="_blank" rel="noreferrer">sysadmin guide</a></p>
+      {% endtrans %}
+    </div>
+  </div>
+{% endblock %}

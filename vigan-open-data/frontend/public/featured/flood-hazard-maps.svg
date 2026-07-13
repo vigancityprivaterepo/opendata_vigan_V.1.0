@@ -1,0 +1,15 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" fill="#F1F7FD"/>
+  <rect y="477" width="1200" height="243" fill="#D8E9F8"/>
+  <path d="M0 172C119 214 217 228 318 205C415 183 476 121 595 121C703 121 786 186 879 205C981 226 1092 203 1200 127V0H0V172Z" fill="#B9DAF1"/>
+  <path d="M79 511C164 461 257 438 346 451C434 464 503 509 587 520C678 532 759 511 842 469C936 420 1019 381 1121 390" stroke="#1D4ED8" stroke-width="12" stroke-linecap="round"/>
+  <path d="M56 561C151 512 251 497 351 511C446 525 533 578 628 587C720 596 815 567 911 522C995 482 1079 452 1167 457" stroke="#38BDF8" stroke-width="10" stroke-linecap="round"/>
+  <path d="M37 609C140 562 244 554 355 568C458 582 549 634 651 639C745 644 849 612 953 567C1042 528 1122 501 1190 504" stroke="#7DD3FC" stroke-width="8" stroke-linecap="round" stroke-dasharray="4 20"/>
+  <path d="M266 278L347 182L452 224L514 144L631 191L710 123L831 164L922 103L1036 138" stroke="#F97316" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="452" cy="224" r="24" fill="#EF4444"/>
+  <path d="M452 184C430 184 412 202 412 224C412 255 452 292 452 292C452 292 492 255 492 224C492 202 474 184 452 184Z" fill="#DC2626"/>
+  <circle cx="452" cy="224" r="11" fill="white"/>
+  <rect x="100" y="84" width="253" height="104" rx="26" fill="white" fill-opacity="0.74"/>
+  <text x="136" y="128" fill="#174A7A" font-family="Arial, sans-serif" font-size="34" font-weight="700">Flood Hazard Maps</text>
+  <text x="136" y="161" fill="#55708B" font-family="Arial, sans-serif" font-size="22">Priority zones and exposed areas</text>
+</svg>
