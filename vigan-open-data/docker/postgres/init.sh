@@ -1,6 +1,7 @@
 #!/bin/sh
 set -eu
 
+# Use the cluster default locale so Alpine-based Postgres starts reliably.
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<SQL
 CREATE DATABASE datastore
     OWNER ${POSTGRES_USER};
