@@ -3,11 +3,7 @@ set -eu
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<SQL
 CREATE DATABASE datastore
-    OWNER ${POSTGRES_USER}
-    ENCODING 'UTF8'
-    LC_COLLATE 'en_US.UTF-8'
-    LC_CTYPE 'en_US.UTF-8'
-    TEMPLATE template0;
+    OWNER ${POSTGRES_USER};
 
 DO \$\$
 BEGIN
