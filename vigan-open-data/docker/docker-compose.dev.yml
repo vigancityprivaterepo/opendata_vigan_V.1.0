@@ -6,7 +6,7 @@ services:
     restart: "no"
     environment:
       CKAN_DEBUG: "true"
-      CKAN_SITE_URL: http://172.16.2.11:8080
+      CKAN_SITE_URL: http://172.16.2.11
       NEXT_PUBLIC_CKAN_URL: http://ckan:5000
     volumes:
       - ckan_storage:/var/lib/ckan
@@ -24,8 +24,8 @@ services:
     restart: "no"
     environment:
       NEXT_PUBLIC_CKAN_URL: http://ckan:5000
-      NEXT_PUBLIC_SITE_URL: http://172.16.2.11:8080
-      CKAN_SITE_URL: http://172.16.2.11:8080
+      NEXT_PUBLIC_SITE_URL: http://172.16.2.11
+      CKAN_SITE_URL: http://172.16.2.11
       LOGIN_ACCESS_TOKEN_HASH: ${LOGIN_ACCESS_TOKEN_HASH:-}
       LOGIN_ACCESS_TOKEN: ${LOGIN_ACCESS_TOKEN:-}
     command: npm run dev

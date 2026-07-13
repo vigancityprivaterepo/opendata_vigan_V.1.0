@@ -472,11 +472,11 @@ function getPublicRequestOrigin(request: NextRequest) {
     return `${forwardedProto}://${host}`
   }
 
-  return normalizePortalOrigin(process.env.CKAN_SITE_URL || 'http://172.16.2.11:8080')
+  return normalizePortalOrigin(process.env.CKAN_SITE_URL || 'http://172.16.2.11')
 }
 
 function mapCkanRedirect(location: string, requestUrl: string) {
-  const portalOrigin = normalizePortalOrigin(process.env.CKAN_SITE_URL || 'http://172.16.2.11:8080')
+  const portalOrigin = normalizePortalOrigin(process.env.CKAN_SITE_URL || 'http://172.16.2.11')
   const proxyOrigin = new URL(requestUrl).origin
   const upstreamBase = normalizePortalOrigin(process.env.CKAN_INTERNAL_URL || 'http://ckan:5000')
 
@@ -597,7 +597,7 @@ async function getCkanCsrfToken(request: NextRequest, upstreamHeaders: Headers) 
   }
   tokenHeaders.set('accept', 'text/html,application/xhtml+xml')
   tokenHeaders.set('x-forwarded-proto', request.headers.get('x-forwarded-proto') || 'http')
-  tokenHeaders.set('x-forwarded-host', request.headers.get('host') || '172.16.2.11:8080')
+  tokenHeaders.set('x-forwarded-host', request.headers.get('host') || '172.16.2.11')
   tokenHeaders.set('x-vigan-embed', '1')
 
   const response = await fetch(upstreamUrl, {
@@ -721,7 +721,7 @@ function rewriteCkanHtml(html: string, includeProxyNav: boolean) {
     process.env.CKAN_SITE_URL,
     process.env.CKAN_INTERNAL_URL,
     'http://localhost:5000',
-    'http://localhost:8080',
+    'http://localhost',
   ].filter((origin): origin is string => Boolean(origin))
 
   for (const origin of absoluteCkanOrigins) {
@@ -926,7 +926,7 @@ async function proxyToCkan(request: NextRequest, params: { path?: string[] }) {
   forwardHeader('x-csrf-token')
   forwardHeader('x-ckan-api-key')
   upstreamHeaders.set('x-forwarded-proto', request.headers.get('x-forwarded-proto') || 'http')
-  upstreamHeaders.set('x-forwarded-host', request.headers.get('host') || '172.16.2.11:8080')
+  upstreamHeaders.set('x-forwarded-host', request.headers.get('host') || '172.16.2.11')
   upstreamHeaders.set('x-vigan-embed', '1')
 
   const needsDatatablesCsrf =

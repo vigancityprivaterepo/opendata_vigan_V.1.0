@@ -266,8 +266,8 @@ services:
     container_name: vigan_nginx
     restart: unless-stopped
     ports:
-      - "8080:80"
-      - "8443:443"
+      - "80:80"
+      - "443:443"
     depends_on:
       - ckan
       - frontend
@@ -285,7 +285,7 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_CKAN_URL: ${NEXT_PUBLIC_CKAN_URL:-http://nginx}
-        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:8080}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost}
     container_name: vigan_frontend
     restart: unless-stopped
     environment:
