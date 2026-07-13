@@ -240,8 +240,12 @@ def main():
     print("\n-- Step 4: XLoader token --")
     configure_xloader_token(sysadmin_name)
 
-    print("\n-- Step 5: Tracking summary --")
-    refresh_tracking_summary()
+    if os.environ.get("CKAN_RUN_STARTUP_MAINTENANCE", "false").lower() == "true":
+        print("\n-- Step 5: Tracking summary --")
+        refresh_tracking_summary()
+    else:
+        print("\n-- Step 5: Tracking summary skipped --")
+        print("Set CKAN_RUN_STARTUP_MAINTENANCE=true to run it during startup.")
 
     print("\nprerun.py complete - handing off to CKAN server.\n")
 
